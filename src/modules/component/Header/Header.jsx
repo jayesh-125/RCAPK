@@ -20,24 +20,20 @@ function Header() {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileanchorEl, setMobileAnchorEl] = React.useState(null);
-  const [hide, setHide] = React.useState(false);
 
   const defaultOpen = (e) => {
     setAnchorEl(e.currentTarget);
-    setHide(true);
   };
   const mobileOpen = (e) => {
     setMobileAnchorEl(e.currentTarget);
-    setHide(true);
   };
 
   const defaultClose = () => {
-    setMobileAnchorEl(null);
-    setHide(false);
+    setAnchorEl(null);
+    mobileClose();
   };
   const mobileClose = () => {
     setMobileAnchorEl(null);
-    setHide(false);
   };
 
   //child component
@@ -56,7 +52,7 @@ function Header() {
             vertical: "top",
             horizontal: "right",
           }}
-          open={hide}
+          open={Boolean(anchorEl)}
           onClose={defaultClose}
         >
           <MenuItem onClick={defaultClose}>Profile</MenuItem>
@@ -80,7 +76,7 @@ function Header() {
           vertical: "top",
           horizontal: "right",
         }}
-        open={hide}
+        open={Boolean(mobileanchorEl)}
         onClose={mobileClose}
       >
         <MenuItem onClick={mobileClose}>
@@ -107,11 +103,11 @@ function Header() {
           </IconButton>
           <p>Notifications</p>
         </MenuItem>
-        <MenuItem onClick={mobileClose}>
+        <MenuItem onClick={defaultOpen}>
           <IconButton
             size="large"
             aria-label="account of current user"
-            aria-controls="primary-search-account-menu"
+            aria-controls="menu-id"
             aria-haspopup="true"
             color="inherit"
           >
@@ -129,11 +125,11 @@ function Header() {
       position="static"
       enableColorOnDark={true}
       sx={{
-        background: "#0a5c36",
+        background: "#555555",
         boxShadow: "none",
         borderRadius: { xs: "8px 8px 0 0", sm: "0" },
         width: "auto",
-        marginLeft: { xs: "16px" },
+        marginLeft: { xs: "16px", sm: "0" },
       }}
     >
       <Toolbar
@@ -157,9 +153,8 @@ function Header() {
             size="large"
             edge="end"
             aria-label="account of current user"
-            aria-controls={Boolean(anchorEl) ? "menu-id" : undefined}
+            aria-controls={"menu-id"}
             aria-haspopup="true"
-            aria-expanded={Boolean(anchorEl) ? "true" : undefined}
             onClick={defaultOpen}
             color="inherit"
           >
@@ -170,12 +165,9 @@ function Header() {
           <IconButton
             size="large"
             aria-label="show more"
-            aria-controls={
-              Boolean(mobileanchorEl) ? "menu-mobile-id" : undefined
-            }
+            aria-controls={"menu-mobile-id"}
             aria-haspopup="true"
             onClick={mobileOpen}
-            aria-expanded={Boolean(mobileanchorEl) ? "true" : undefined}
             color="inherit"
           >
             <MoreIcon />
