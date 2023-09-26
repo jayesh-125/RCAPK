@@ -5,29 +5,27 @@ import Sidebar from "../../modules/component/Sidebar/Sidebar";
 
 function DefaultLayout({ children }) {
   return (
-    <React.Fragment>
-      <Grid container spacing={0}>
-        {/* Sidebar Grid */}
-        <Grid item sm={4}>
-          <Sidebar />
-        </Grid>
-
-        {/* Main Content Grid */}
-        <Grid
-          sx={{
-            width: "inherit",
-            padding: { xs: "0 10px", sm: "0" },
-          }}
-          item
-          sm={8}
-        >
-          {/* Header */}
-          <Header />
-          {/* Main Content */}
-          {children}
-        </Grid>
+    <Grid container spacing={0}>
+      {/* Sidebar Grid */}
+      <Grid item sm={4}>
+        <Sidebar />
       </Grid>
-    </React.Fragment>
+
+      {/* Main Content Grid */}
+      <Grid
+        sx={{
+          width: "inherit",
+          padding: { xs: "0 10px", sm: "0" },
+        }}
+        item
+        sm={8}
+      >
+        {/* Header */}
+        <Header />
+        {/* Main Content */}
+        {children}
+      </Grid>
+    </Grid>
   );
 }
 

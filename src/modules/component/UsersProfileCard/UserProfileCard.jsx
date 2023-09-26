@@ -1,70 +1,13 @@
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Avatar, Box, Card, CardHeader, IconButton } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {  userData } from "../../../constant/constant";
 
+const users = userData;
 function UserProfileCard() {
   const [show, setShow] = React.useState(false);
-
-  const users = [
-    {
-      name: "John Doe",
-      hide: true,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac ligula vel nunc consectetur congue.",
-    },
-    {
-      name: "Alice Smith",
-      hide: true,
-      text: "Hello, I'm Alice.",
-    },
-    {
-      name: "Bob Johnson",
-      hide: true,
-      text: "Coding is fun and exciting.",
-    },
-    {
-      name: "Eva Williams",
-      hide: true,
-      text: "Exploring new places is my passion.",
-    },
-    {
-      name: "David Brown",
-      hide: true,
-      text: "Music helps me relax and unwind.",
-    },
-    {
-      name: "Grace Davis",
-      hide: true,
-      text: "Coffee is my morning ritual.",
-    },
-    {
-      name: "Michael White",
-      hide: true,
-      text: "Learning new skills every day.",
-    },
-    {
-      name: "Olivia Jones",
-      hide: true,
-      text: "Nature walks soothe my soul.",
-    },
-    {
-      name: "Daniel Clark",
-      hide: true,
-      text: "Science fiction is my favorite genre.",
-    },
-    {
-      name: "Sophia Lee",
-      hide: true,
-      text: "Baking treats for family gatherings.",
-    },
-    {
-      name: "William Turner",
-      hide: true,
-      text: "Photography captures life's moments.",
-    },
-  ];
 
   const ProfileAvtarName = (text) => {
     return text.charAt(0).toUpperCase();
@@ -74,14 +17,40 @@ function UserProfileCard() {
     return text.slice(0, 22) + "...";
   };
 
-  const activeSet = (id) => {
-    return id;
+  const [active, setActive] = React.useState(new Set());
+  const navigate = useNavigate();
+
+  const handleActive = (index) => {
+    const newSet = new Set(active);
+    if (newSet.has(index)) {
+      newSet.delete(index);
+    } else {
+      newSet.add(index);
+    }
+    setActive(newSet);
+    navigate("/userchat");
   };
 
   return (
     <>
       {users.map((profile, index) => (
-        <Card key={index} sx={{ margin: "3px 0" }}>
+        <Card
+          key={index}
+          sx={{
+            margin: "3px 0",
+            backgroundColor: active.has(index) ? "#0a5c3699" : "inherit",
+            color: active.has(index) ? "#ffffff" : "inherit",
+            // Add styles for subheader and avatar background on hover
+            "& .MuiCardHeader-subheader": {
+              color: active.has(index) ? "#ffffff88" : "inherit",
+            },
+            "& .MuiAvatar-root": {
+              color: active.has(index) ? "#0a5c36" : "inherit",
+              backgroundColor: active.has(index) ? "#ffffff" : "default",
+            },
+          }}
+          onClick={() => handleActive(index)}
+        >
           <CardHeader
             avatar={
               <Avatar aria-label="user-avatar">
@@ -93,15 +62,9 @@ function UserProfileCard() {
             action={
               <Box>
                 <IconButton
-                  aria-label="pinned"
-                  color="default"
-                  onClick={() => {
-                    activeSet(index);
-                  }}
+                  aria-label="more"
+                  sx={{ color: active.has(index) ? "#ffffff" : "inherit" }}
                 >
-                  {show ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                </IconButton>
-                <IconButton aria-label="more" color="default">
                   <MoreIcon />
                 </IconButton>
               </Box>

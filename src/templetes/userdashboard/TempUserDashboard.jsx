@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import HelloImage from "../../modules/component/HelloImg/HelloImage";
+import { Container } from "@mui/material";
 
 function TempUserDashboard() {
   return (
-    <div>add elements</div>
-  )
+    <Container sx={{height: "calc(100vh - 70px)"}} >
+      <HelloImage />
+    </Container>
+  );
 }
 
-export default TempUserDashboard
+export default TempUserDashboard;

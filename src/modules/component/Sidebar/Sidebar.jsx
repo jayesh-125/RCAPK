@@ -29,6 +29,7 @@ function Sidebar() {
         sx={{
           height: "calc(100vh - 70px)",
           overflowY: "auto",
+          padding :"0px 5px",
           scrollbarWidth: "thin",
           "&::-webkit-scrollbar": {
             width: "4px",
