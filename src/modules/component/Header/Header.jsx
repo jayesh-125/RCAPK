@@ -12,56 +12,35 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import MailIcon from "@mui/icons-material/Mail";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import SearchInputFilled from "../../subcomponent/SearchInp/SearchInputField";
+import { useNavigate } from "react-router-dom";
+import { ArrowBackIosNew } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import SearchInputFilled from "../SearchInp/SearchInputField";
 
 //header function
 function Header() {
   //constant
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const navigate = useNavigate();
   const [mobileanchorEl, setMobileAnchorEl] = React.useState(null);
+  const navpath = useSelector((state) => state.path);
 
-  const defaultOpen = (e) => {
-    setAnchorEl(e.currentTarget);
+  const pathHandle = () => {
+    navpath?.isprofie ? navigate("/userchat") : navigate("/userprofile");
+    navpath?.ischatbox ? navigate("/") : navigate("/userchat");
+    navpath?.isdashboard ? navigate("/login") : navigate("/");
+  };
+  const ProfileOpen = () => {
+    navigate("/userprofile");
   };
   const mobileOpen = (e) => {
     setMobileAnchorEl(e.currentTarget);
   };
 
-  const defaultClose = () => {
-    setAnchorEl(null);
-    mobileClose();
-  };
   const mobileClose = () => {
     setMobileAnchorEl(null);
   };
 
   //child component
-  const DefaultMenu = () => {
-    return (
-      <React.Fragment>
-        <Menu
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          id={"menu-id"}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorEl)}
-          onClose={defaultClose}
-        >
-          <MenuItem onClick={defaultClose}>Profile</MenuItem>
-          <MenuItem onClick={defaultClose}>My account</MenuItem>
-        </Menu>
-      </React.Fragment>
-    );
-  };
-
   const MobileMenu = () => {
     return (
       <Menu
@@ -103,7 +82,7 @@ function Header() {
           </IconButton>
           <p>Notifications</p>
         </MenuItem>
-        <MenuItem onClick={defaultOpen}>
+        <MenuItem onClick={ProfileOpen}>
           <IconButton
             size="large"
             aria-label="account of current user"
@@ -137,6 +116,14 @@ function Header() {
           padding: "0",
         }}
       >
+        <IconButton
+          aria-label="back"
+          sx={{ display: navpath?.isdashboard ? "none" : "block" }}
+          color="inherit"
+          onClick={pathHandle}
+        >
+          <ArrowBackIosNew />
+        </IconButton>
         <SearchInputFilled />
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: "none", sm: "flex" } }}>
@@ -152,10 +139,7 @@ function Header() {
           <IconButton
             size="large"
             edge="end"
-            aria-label="account of current user"
-            aria-controls={"menu-id"}
-            aria-haspopup="true"
-            onClick={defaultOpen}
+            onClick={ProfileOpen}
             color="inherit"
           >
             <AccountCircle />
@@ -174,7 +158,6 @@ function Header() {
           </IconButton>
         </Box>
       </Toolbar>
-      <DefaultMenu />
       <MobileMenu />
     </AppBar>
   );

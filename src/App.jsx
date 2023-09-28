@@ -4,10 +4,6 @@ import UserDashboardPage from "./pages/userdashboard/UserDashboardPage";
 import LoginPage from "./pages/login/LoginPage";
 import UserProfilePage from "./pages/userprofile/UserProfilePage";
 import UserChatPage from "./pages/userchat/UserChatPage";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
 
 function App() {
   return (

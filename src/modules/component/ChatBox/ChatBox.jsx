@@ -7,18 +7,20 @@ function ChatBox({ message, isUser }) {
       style={{
         padding: "1rem",
         display: "flex",
-        justifyContent: isUser ? "flex-end" : "flex-start",
+        justifyContent: "flex-end",
+        flexDirection: isUser ? "row" : "row-reverse",
       }}
     >
       <Paper
         elevation={3}
         style={{
           padding: "1rem",
-          maxWidth: "70%",
+          maxWidth: "50%",
           background: isUser ? "#14452faf" : "#F0F0F0",
           color: isUser ? "#fff" : "#000",
-          borderRadius : "10px",
-          marginRight : "10px"
+          borderRadius: "10px",
+          marginRight: isUser ? "10px" : "0",
+          marginLeft: !isUser ? "10px" : "0",
         }}
       >
         <Typography variant="body1">{message.text}</Typography>
@@ -27,7 +29,9 @@ function ChatBox({ message, isUser }) {
         style={{
           marginLeft: isUser ? "0" : "10px",
           marginRight: isUser ? "10px" : "0",
-          backgroundColor: "#14452faf",
+          backgroundColor: isUser ? "#14452faf" : "#F0F0F0",
+          color: !isUser ? "#14452faf" : "#F0F0F0",
+          boxShadow: "0px 1px 4px #00000055",
         }}
       >
         {message.name.charAt(0).toUpperCase()}

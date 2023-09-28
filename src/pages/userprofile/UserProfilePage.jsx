@@ -4,7 +4,7 @@ import TempUserProfile from "../../templetes/userprofile/TempUserProfile";
 
 function UserProfilePage() {
   return (
-    <DefaultLayout>
+    <DefaultLayout isUserProfile={true}>
       <TempUserProfile />
     </DefaultLayout>
   );
