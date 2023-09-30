@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   AppBar,
   Badge,
@@ -13,22 +12,15 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import MailIcon from "@mui/icons-material/Mail";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
-import { ArrowBackIosNew } from "@mui/icons-material";
-import { useSelector } from "react-redux";
 import SearchInputFilled from "../SearchInp/SearchInputField";
+import React from "react";
 
 //header function
 function Header() {
   //constant
   const navigate = useNavigate();
   const [mobileanchorEl, setMobileAnchorEl] = React.useState(null);
-  const navpath = useSelector((state) => state.path);
 
-  const pathHandle = () => {
-    navpath?.isprofie ? navigate("/userchat") : navigate("/userprofile");
-    navpath?.ischatbox ? navigate("/") : navigate("/userchat");
-    navpath?.isdashboard ? navigate("/login") : navigate("/");
-  };
   const ProfileOpen = () => {
     navigate("/userprofile");
   };
@@ -116,14 +108,6 @@ function Header() {
           padding: "0",
         }}
       >
-        <IconButton
-          aria-label="back"
-          sx={{ display: navpath?.isdashboard ? "none" : "block" }}
-          color="inherit"
-          onClick={pathHandle}
-        >
-          <ArrowBackIosNew />
-        </IconButton>
         <SearchInputFilled />
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: "none", sm: "flex" } }}>
