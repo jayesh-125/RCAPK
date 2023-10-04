@@ -1,6 +1,8 @@
 import { Button, Grid, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function TempLogin() {
+  const navigate = useNavigate()
   return (
     <Grid
       container
@@ -32,7 +34,7 @@ function TempLogin() {
             type="submit"
             variant="contained"
             sx={{ marginTop: "1rem", background: "#555555" }}
-            onClick={() => navigatw("/")}
+            onClick={() => navigate("/")}
           >
             Send OPT
           </Button>

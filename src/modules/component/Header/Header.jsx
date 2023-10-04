@@ -1,3 +1,4 @@
+import React from "react";
 import {
   AppBar,
   Badge,
@@ -5,7 +6,10 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Popover,
+  Snackbar,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
@@ -13,25 +17,26 @@ import MailIcon from "@mui/icons-material/Mail";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 import SearchInputFilled from "../SearchInp/SearchInputField";
-import React from "react";
 
 //header function
 function Header() {
   //constant
   const navigate = useNavigate();
   const [mobileanchorEl, setMobileAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
 
-  const ProfileOpen = () => {
-    navigate("/userprofile");
-  };
-  const mobileOpen = (e) => {
-    setMobileAnchorEl(e.currentTarget);
-  };
+  const mobileOpen = (e) => setMobileAnchorEl(e.currentTarget);
+  const defaultOpen = (e) => setAnchorEl(e.currentTarget);
+  const notificationOpen = (e) => setNotiAnchorEl(e.currentTarget);
 
-  const mobileClose = () => {
-    setMobileAnchorEl(null);
-  };
+  const defaultClose = () => { mobileClose(), setAnchorEl(null) };
+  const mobileClose = () => { setMobileAnchorEl(null) };
+  const notificationClose = () => { setNotiAnchorEl(null) };
 
+
+  const openNoti = Boolean(notiAnchorEl);
+  const id = openNoti ? 'simple-popover' : undefined;
   //child component
   const MobileMenu = () => {
     return (
@@ -74,7 +79,7 @@ function Header() {
           </IconButton>
           <p>Notifications</p>
         </MenuItem>
-        <MenuItem onClick={ProfileOpen}>
+        <MenuItem onClick={defaultOpen}>
           <IconButton
             size="large"
             aria-label="account of current user"
@@ -85,6 +90,33 @@ function Header() {
             <AccountCircle />
           </IconButton>
           <p>Profile</p>
+        </MenuItem>
+      </Menu>
+    );
+  };
+
+  const DefaultMenu = () => {
+    return (
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        id={"menu-id"}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={Boolean(anchorEl)}
+        onClose={defaultClose}
+      >
+        <MenuItem onClick={() => { defaultClose(), navigate('/userprofile') }}>
+          Profile
+        </MenuItem>
+        <MenuItem onClick={() => { defaultClose(), navigate('/login') }}>
+          LogOut
         </MenuItem>
       </Menu>
     );
@@ -115,15 +147,31 @@ function Header() {
             size="large"
             aria-label="show 17 new notifications"
             color="inherit"
+            aria-describedby={id}
+            onClick={notificationOpen}
           >
             <Badge badgeContent={17} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
+          <Popover
+            id={id}
+            open={openNoti}
+            anchorEl={notiAnchorEl}
+            onClose={notificationClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+          >
+            <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
+          </Popover>
           <IconButton
             size="large"
             edge="end"
-            onClick={ProfileOpen}
+            onClick={defaultOpen}
+            aria-controls={"menu-id"}
+            aria-haspopup="true"
             color="inherit"
           >
             <AccountCircle />
@@ -143,6 +191,8 @@ function Header() {
         </Box>
       </Toolbar>
       <MobileMenu />
+      <DefaultMenu />
+      <Snackbar />
     </AppBar>
   );
 }
