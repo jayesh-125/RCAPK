@@ -15,13 +15,15 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import MailIcon from "@mui/icons-material/Mail";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SearchInputFilled from "../SearchInp/SearchInputField";
+import ArrowBack from "@mui/icons-material/ArrowBackIos";
 
 //header function
 function Header() {
   //constant
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileanchorEl, setMobileAnchorEl] = React.useState(null);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
@@ -30,13 +32,26 @@ function Header() {
   const defaultOpen = (e) => setAnchorEl(e.currentTarget);
   const notificationOpen = (e) => setNotiAnchorEl(e.currentTarget);
 
-  const defaultClose = () => { mobileClose(), setAnchorEl(null) };
-  const mobileClose = () => { setMobileAnchorEl(null) };
-  const notificationClose = () => { setNotiAnchorEl(null) };
+  const defaultClose = () => {
+    mobileClose(), setAnchorEl(null);
+  };
+  const mobileClose = () => {
+    setMobileAnchorEl(null);
+  };
+  const notificationClose = () => {
+    setNotiAnchorEl(null);
+  };
 
+  const redirectBack = () => {
+    if (location.pathname === "/") {
+      navigate("/login");
+    } else {
+      window.history.back();
+    }
+  };
 
   const openNoti = Boolean(notiAnchorEl);
-  const id = openNoti ? 'simple-popover' : undefined;
+  const id = openNoti ? "simple-popover" : undefined;
   //child component
   const MobileMenu = () => {
     return (
@@ -112,10 +127,18 @@ function Header() {
         open={Boolean(anchorEl)}
         onClose={defaultClose}
       >
-        <MenuItem onClick={() => { defaultClose(), navigate('/userprofile') }}>
+        <MenuItem
+          onClick={() => {
+            defaultClose(), navigate("/userprofile");
+          }}
+        >
           Profile
         </MenuItem>
-        <MenuItem onClick={() => { defaultClose(), navigate('/login') }}>
+        <MenuItem
+          onClick={() => {
+            defaultClose(), navigate("/login");
+          }}
+        >
           LogOut
         </MenuItem>
       </Menu>
@@ -140,6 +163,9 @@ function Header() {
           padding: "0",
         }}
       >
+        <IconButton color="inherit" onClick={redirectBack}>
+          <ArrowBack />
+        </IconButton>
         <SearchInputFilled />
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: "none", sm: "flex" } }}>
@@ -160,8 +186,8 @@ function Header() {
             anchorEl={notiAnchorEl}
             onClose={notificationClose}
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
+              vertical: "bottom",
+              horizontal: "left",
             }}
           >
             <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>

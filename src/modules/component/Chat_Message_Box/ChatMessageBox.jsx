@@ -1,9 +1,19 @@
 import { EmojiEmotions, Send } from "@mui/icons-material";
 import { Box, Container, Grid, IconButton, TextField } from "@mui/material";
 import { Picker } from "emoji-mart";
-import React from "react";
+import React, { useState } from "react";
 
 function ChatMessageBox() {
+  const [message, setMessage] = useState("");
+
+  const handleChangeInput = (e) => setMessage(e.target.value);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(message);
+    setMessage("");
+  };
+
   return (
     <Container
       sx={{
@@ -34,10 +44,12 @@ function ChatMessageBox() {
             variant="outlined"
             color="success"
             sx={{ width: { xs: " 100%", lg: "70%" } }}
+            onChange={handleChangeInput}
+            value={message}
           />
         </Grid>
         <Grid item xs={1}>
-          <IconButton aria-label="message">
+          <IconButton aria-label="message" onClick={handleSubmit}>
             <Send />
           </IconButton>
         </Grid>

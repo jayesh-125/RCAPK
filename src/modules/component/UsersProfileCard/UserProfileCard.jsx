@@ -10,19 +10,22 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { userData } from "../../../constant/constant";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserData } from "../../../REDUX-slices/userSlice";
 
-const users = userData;
 function UserProfileCard() {
+  const users = userData;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.userData);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const openIcon = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+
+  const openIcon = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => setAnchorEl(null);
 
   const ProfileAvtarName = (text) => {
     return text.charAt(0).toUpperCase();
@@ -32,18 +35,11 @@ function UserProfileCard() {
     return text.slice(0, 22) + "...";
   };
 
-  const [active, setActive] = React.useState(new Set());
-  const navigate = useNavigate();
-
-  const handleActive = (index) => {
-    const newSet = new Set(active);
-    if (newSet.has(index)) {
-      newSet.delete(index);
-    } else {
-      newSet.add(index);
+  const setCurrentUser = (user) => {
+    dispatch(getUserData(user));
+    if (location.pathname === "/") {
+      navigate("/userchat");
     }
-    setActive(newSet);
-    navigate("/userchat");
   };
 
   return (
@@ -53,18 +49,18 @@ function UserProfileCard() {
           key={index}
           sx={{
             margin: "3px 0",
-            backgroundColor: active.has(index) ? "#0a5c3699" : "inherit",
-            color: active.has(index) ? "#ffffff" : "inherit",
-            // Add styles for subheader and avatar background on hover
+            backgroundColor: "inherit",
+            color: "inherit",
+            cursor: "pointer",
             "& .MuiCardHeader-subheader": {
-              color: active.has(index) ? "#ffffff88" : "inherit",
+              color: "inherit",
             },
             "& .MuiAvatar-root": {
-              color: active.has(index) ? "#0a5c36" : "inherit",
-              backgroundColor: active.has(index) ? "#ffffff" : "default",
+              color: "inherit",
+              backgroundColor: "default",
             },
           }}
-          onClick={() => handleActive(index)}
+          onClick={() => setCurrentUser(profile)}
         >
           <CardHeader
             avatar={
@@ -83,7 +79,7 @@ function UserProfileCard() {
                   aria-haspopup="true"
                   id="long-button"
                   onClick={openIcon}
-                  sx={{ color: active.has(index) ? "#ffffff" : "inherit" }}
+                  sx={{ color: "inherit" }}
                 >
                   <MoreIcon />
                 </IconButton>
