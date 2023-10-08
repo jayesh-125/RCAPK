@@ -1,8 +1,6 @@
 import { addDoc, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-const getUsersData = collection(db, "/users");
-
 //get all datas
 export const getMessages = () => {
   const getMessageData = collection(db, "/messages");
