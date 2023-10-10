@@ -1,4 +1,4 @@
-import { addDoc, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 //get all datas

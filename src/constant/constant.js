@@ -44,3 +44,10 @@ export const userData = [
     text: "Photography captures life's moments.",
   },
 ];
+
+export const userModel = {
+  Email: "",
+  phoneNo: "",
+  token: "",
+  username: "",
+};
