@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userModel } from "../../constant/constant";
-import { addUsers } from "../../services/users";
+import { addUsers, getUsers } from "../../services/users";
 
 const TempLogin = () => {
   const navigate = useNavigate();
@@ -42,13 +42,25 @@ const TempLogin = () => {
       if (Object.keys(validationErrors).length === 0) {
         try {
           const res = await addUsers(signUpData);
-          console.log("response", res);
-          setLogin(true);
+          // setLogin(true);
         } catch (error) {
-          throw error;
+          alert(error.message);
         }
       }
     };
+
+    const getAllUsers = async () => {
+      try {
+        const res = await getUsers();
+        const exist = res.filter((items) => items?.Email !== "karan@gmail.com");
+        console.info("responce", exist);
+      } catch (error) {
+        throw error;
+      }
+    };
+    useEffect(() => {
+      getAllUsers();
+    }, []);
 
     return (
       <Grid

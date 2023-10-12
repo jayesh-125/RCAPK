@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   updateDoc,
 } from "firebase/firestore";
@@ -14,7 +15,18 @@ export const getUsers = async () => {
   try {
     const querySnapshot = await getDocs(getUsersData);
     const userData = querySnapshot.docs.map((doc) => doc.data());
-    return console.warn(userData);
+    return userData;
+  } catch (error) {
+    console.log("Something went wrong", error);
+  }
+};
+
+export const getUserById = async (id) => {
+  const getUsersData = doc(db, "users", id);
+  try {
+    getDoc(getUsersData).then((data) => {
+      return data;
+    });
   } catch (error) {
     console.log("Something went wrong", error);
   }
