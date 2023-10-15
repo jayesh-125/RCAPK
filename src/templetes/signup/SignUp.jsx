@@ -1,53 +1,48 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userModel } from "../../constant/constant";
 import { addUsers, getUsers } from "../../services/users";
 
 const TempSignUp = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState({});
-
-  //registration
   const [signUpData, setSignUpData] = useState(userModel);
 
   const handleInputChangeOfRegister = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "profile_image" && files.length > 0) {
-      const file = files[0];
-      setSignUpData((prev) => ({ ...prev, [name]: file }));
-    } else {
-      setSignUpData((prev) => ({ ...prev, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setSignUpData((prev) => ({ ...prev, [name]: value }));
+
     const token = btoa(signUpData.username);
     setSignUpData((prev) => ({ ...prev, token }));
   };
 
   const handleRegister = async () => {
-    const validationErrors = {};
-    if (!signUpData.username.trim())
-      validationErrors.username = "Username is required";
-    if (!signUpData.Email.trim()) validationErrors.Email = "Email is required";
-    setError(validationErrors);
+    try {
+      if (!signUpData.username.trim()) throw new Error("Username is required");
+      if (!signUpData.Email.trim()) throw new Error("Email is required");
+    } catch (error) {
+      alert(error.message);
+    }
+
     if (Object.keys(validationErrors).length === 0) {
       try {
-        if (getAllUsers(signUpData?.Email)) {
-          console.log(getAllUsers(signUpData?.Email));
-          throw new Error("User already exist");
+        const exists = await userExists(signUpData?.Email);
+        if (exists) {
+          throw new Error("User already exists");
+        } else {
+          const res = await addUsers(signUpData);
+          navigate("/login");
         }
-        const res = await addUsers(signUpData);
-        navigate("/sign-up");
       } catch (error) {
         alert(error.message);
       }
     }
   };
 
-  const getAllUsers = async (email) => {
+  const userExists = async (email) => {
     try {
       const res = await getUsers();
-      const exist = res.filter((items) => items?.Email === email);
-      return !!exist;
+      return res.some((item) => item?.Email === email);
     } catch (error) {
       return false;
     }
@@ -87,6 +82,7 @@ const TempSignUp = () => {
             variant="filled"
             label="Enter User Name"
             name="username"
+            autoComplete="username"
             type="text"
             color="success"
             sx={{ marginBottom: "1rem" }}
@@ -99,6 +95,7 @@ const TempSignUp = () => {
             variant="filled"
             label="Enter Your Email"
             name="Email"
+            autoComplete="Email"
             type="email"
             color="success"
             sx={{ marginBottom: "1rem" }}
