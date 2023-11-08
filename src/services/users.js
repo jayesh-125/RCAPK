@@ -21,7 +21,7 @@ export const getUsers = async () => {
   }
 };
 
-export const getUserById = async (id) => {
+export const getUserByPerameter = async (id) => {
   const getUsersData = doc(db, "users", id);
   try {
     getDoc(getUsersData).then((data) => {

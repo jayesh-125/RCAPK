@@ -1,53 +1,68 @@
 export const userData = [
   {
-    name: "John Doe",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac ligula vel nunc consectetur congue.",
+    username: "John Doe",
+    last_message:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac ligula vel nunc consectetur congue.",
   },
   {
-    name: "Alice Smith",
-    text: "Hello, I'm Alice.",
+    username: "Alice Smith",
+    last_message: "Hello, I'm Alice.",
   },
   {
-    name: "Bob Johnson",
-    text: "Coding is fun and exciting.",
+    username: "Bob Johnson",
+    last_message: "Coding is fun and exciting.",
   },
   {
-    name: "Eva Williams",
-    text: "Exploring new places is my passion.",
+    username: "Eva Williams",
+    last_message: "Exploring new places is my passion.",
   },
   {
-    name: "David Brown",
-    text: "Music helps me relax and unwind.",
+    username: "David Brown",
+    last_message: "Music helps me relax and unwind.",
   },
   {
-    name: "Grace Davis",
-    text: "Coffee is my morning ritual.",
+    username: "Grace Davis",
+    last_message: "Coffee is my morning ritual.",
   },
   {
-    name: "Michael White",
-    text: "Learning new skills every day.",
+    username: "Michael White",
+    last_message: "Learning new skills every day.",
   },
   {
-    name: "Olivia Jones",
-    text: "Nature walks soothe my soul.",
+    username: "Olivia Jones",
+    last_message: "Nature walks soothe my soul.",
   },
   {
-    name: "Daniel Clark",
-    text: "Science fiction is my favorite genre.",
+    username: "Daniel Clark",
+    last_message: "Science fiction is my favorite genre.",
   },
   {
-    name: "Sophia Lee",
-    text: "Baking treats for family gatherings.",
+    username: "Sophia Lee",
+    last_message: "Baking treats for family gatherings.",
   },
   {
-    name: "William Turner",
-    text: "Photography captures life's moments.",
+    username: "William Turner",
+    last_message: "Photography captures life's moments.",
   },
 ];
 
 export const userModel = {
-  Email: "",
-  phoneNo: "",
-  token: "",
+  id: "",
+  email: "",
+  phoneNo: 0,
   username: "",
+  imgUrl: "",
+  last_message: "",
+};
+
+export const messageModel = {
+  from_user: "",
+  from_imageUrl: "",
+  from_user_id: "",
+  last_message: "",
+  last_message_time: "",
+  message_number: 0,
+  to_imageUrl: "",
+  to_user_id: "",
+  to_username: "",
 };

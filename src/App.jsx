@@ -5,16 +5,17 @@ import LoginPage from "./pages/login/LoginPage";
 import UserProfilePage from "./pages/userprofile/UserProfilePage";
 import UserChatPage from "./pages/userchat/UserChatPage";
 import SignUp from "./pages/signup/SIgnUp";
+import { route } from "./constant/routes";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<UserDashboardPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/userprofile" element={<UserProfilePage />} />
-        <Route path="/userchat" element={<UserChatPage />} />
+        <Route path={route.dashboard} element={<UserDashboardPage />} />
+        <Route path={route.login} element={<LoginPage />} />
+        <Route path={route.sign_up} element={<SignUp />} />
+        <Route path={route.profile} element={<UserProfilePage />} />
+        <Route path={route.chat} element={<UserChatPage />} />
       </Routes>
     </BrowserRouter>
   );

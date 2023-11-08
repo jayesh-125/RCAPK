@@ -1,48 +1,42 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { userModel } from "../../constant/constant";
 import { addUsers, getUsers } from "../../services/users";
+import { route } from "../../constant/routes";
+import { v4 as uuidv4 } from "uuid";
 
 const TempSignUp = () => {
+  const uniqueId = uuidv4();
   const navigate = useNavigate();
   const [signUpData, setSignUpData] = useState(userModel);
 
   const handleInputChangeOfRegister = (e) => {
     const { name, value } = e.target;
     setSignUpData((prev) => ({ ...prev, [name]: value }));
-
-    const token = btoa(signUpData.username);
-    setSignUpData((prev) => ({ ...prev, token }));
+    setSignUpData((prev) => ({ ...prev, ["id"]: uniqueId }));
   };
 
   const handleRegister = async () => {
     try {
       if (!signUpData.username.trim()) throw new Error("Username is required");
-      if (!signUpData.Email.trim()) throw new Error("Email is required");
+      if (!signUpData.email.trim()) throw new Error("email is required");
+      const exists = await userExists(signUpData?.email);
+      if (exists) {
+        navigate(route.login);
+        throw new Error("You have already account please login");
+      }
+      const res = await addUsers(signUpData);
+      navigate(route.dashboard);
     } catch (error) {
       alert(error.message);
-    }
-
-    if (Object.keys(validationErrors).length === 0) {
-      try {
-        const exists = await userExists(signUpData?.Email);
-        if (exists) {
-          throw new Error("User already exists");
-        } else {
-          const res = await addUsers(signUpData);
-          navigate("/login");
-        }
-      } catch (error) {
-        alert(error.message);
-      }
     }
   };
 
   const userExists = async (email) => {
     try {
       const res = await getUsers();
-      return res.some((item) => item?.Email === email);
+      return res.some((item) => item?.email === email);
     } catch (error) {
       return false;
     }
@@ -94,13 +88,13 @@ const TempSignUp = () => {
             fullWidth
             variant="filled"
             label="Enter Your Email"
-            name="Email"
-            autoComplete="Email"
+            name="email"
+            autoComplete="email"
             type="email"
-            color="success"
+            color="success" 
             sx={{ marginBottom: "1rem" }}
             size="small"
-            value={signUpData?.Email}
+            value={signUpData?.email}
             onChange={(e) => handleInputChangeOfRegister(e)}
           />
           <TextField
@@ -123,6 +117,9 @@ const TempSignUp = () => {
           >
             Register
           </Button>
+          <Typography>
+            If you are already member <Link to={route.login}>login</Link>
+          </Typography>
         </div>
       </Grid>
     </Grid>

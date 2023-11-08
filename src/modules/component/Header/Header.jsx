@@ -18,6 +18,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useLocation, useNavigate } from "react-router-dom";
 import SearchInputFilled from "../SearchInp/SearchInputField";
 import ArrowBack from "@mui/icons-material/ArrowBackIos";
+import { route } from "../../../constant/routes";
 
 //header function
 function Header() {
@@ -43,8 +44,8 @@ function Header() {
   };
 
   const redirectBack = () => {
-    if (location.pathname === "/") {
-      navigate("/login");
+    if (location.pathname === route.dashboard) {
+      navigate(route.login);
     } else {
       window.history.back();
     }
@@ -129,14 +130,14 @@ function Header() {
       >
         <MenuItem
           onClick={() => {
-            defaultClose(), navigate("/userprofile");
+            defaultClose(), navigate(route.profile);
           }}
         >
           Profile
         </MenuItem>
         <MenuItem
           onClick={() => {
-            defaultClose(), navigate("/login");
+            defaultClose(), navigate(route.login);
           }}
         >
           LogOut

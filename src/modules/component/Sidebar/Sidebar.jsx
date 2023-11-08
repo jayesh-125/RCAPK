@@ -8,8 +8,12 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserProfileCard from "../UsersProfileCard/UserProfileCard";
+import { userData } from "../../../constant/constant";
+import { getUsers } from "../../../services/users";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserData } from "../../../REDUX-slices/userSlice";
 
 function Sidebar() {
   const [anchorEl, setanchorEl] = useState();
@@ -17,8 +21,29 @@ function Sidebar() {
   const id = open ? "open-popover" : undefined;
   const handleClose = () => setanchorEl(null);
   const handleOpenAddFriend = (e) => setanchorEl(e.currentTarget);
+  const dispatch = useDispatch();
 
   const AddFriendBox = () => {
+    const [query, setQuery] = useState("");
+    const users = useSelector((state) => state.user.userData);
+
+    const getAllUser = async () => {
+      try {
+        const result = await getUsers();
+        dispatch(getUserData(result));
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+    const filterData = users
+      ? users.filter((data) => data.username === query)
+      : null;
+
+    console.log(filterData);
+    useEffect(() => {
+      getAllUser();
+    }, []);
+
     return (
       <Popover
         id={id}
@@ -39,10 +64,19 @@ function Sidebar() {
           variant="standard"
           placeholder="Add friend"
           color="success"
+          name="search"
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
         <Button sx={{ margin: "20px" }} color="success">
           Add
         </Button>
+        {filterData && (
+          <Box sx={{ marginTop: "20px" }}>
+            <UserProfileCard userData={filterData} />
+          </Box>
+        )}
       </Popover>
     );
   };
@@ -90,7 +124,7 @@ function Sidebar() {
           },
         }}
       >
-        <UserProfileCard />
+        <UserProfileCard userData={userData} />
       </Box>
       <AddFriendBox />
     </>

@@ -1,8 +1,34 @@
 import { Button, Grid, TextField, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { route } from "../../constant/routes";
+import { useState } from "react";
+import { getUsers } from "../../services/users";
 
 const TempLogin = () => {
   const navigate = useNavigate();
+  const [Email, setEmail] = useState("");
+
+  const HandleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      if (!Email.trim()) throw new Error("Email is required");
+      const exists = await userExists(Email);
+      console.log(exists);
+      navigate(route.dashboard);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const userExists = async (email) => {
+    try {
+      const res = await getUsers();
+      const exist = res.find((data) => data?.Email === email);
+      return exist;
+    } catch (error) {
+      throw new Error("User not found");
+    }
+  };
 
   return (
     <Grid
@@ -36,15 +62,17 @@ const TempLogin = () => {
           <TextField
             fullWidth
             variant="filled"
-            label="Enter Your Mobile Number"
-            name="Number"
-            type="number"
+            label="Enter Your Email"
+            name="email"
+            type="email"
             color="success"
             sx={{ marginBottom: "1rem" }}
             size="small"
+            value={Email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          OR
-          <TextField
+          {/* OR */}
+          {/* <TextField
             fullWidth
             variant="filled"
             label="Enter Your Mobile Number"
@@ -53,15 +81,18 @@ const TempLogin = () => {
             color="success"
             sx={{ marginBottom: "1rem" }}
             size="small"
-          />
+          /> */}
           <Button
             type="submit"
             variant="contained"
             sx={{ marginTop: "1rem", background: "#555555" }}
-            onClick={() => navigate("/")}
+            onClick={HandleLogin}
           >
             Login
           </Button>
+          <Typography>
+            If you are new User ? Please <Link to={route.sign_up}>Sign-up</Link>
+          </Typography>
         </div>
       </Grid>
     </Grid>

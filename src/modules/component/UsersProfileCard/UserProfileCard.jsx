@@ -11,11 +11,12 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { userData } from "../../../constant/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../../REDUX-slices/userSlice";
+import { route } from "../../../constant/routes";
+import { PlusOne } from "@mui/icons-material";
 
-function UserProfileCard() {
+function UserProfileCard({ userData, isAdd = false }) {
   const users = userData;
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,10 +38,12 @@ function UserProfileCard() {
 
   const setCurrentUser = (user) => {
     dispatch(getUserData(user));
-    if (location.pathname === "/") {
-      navigate("/userchat");
+    if (location.pathname === route.dashboard) {
+      navigate(route.chat);
     }
   };
+
+  const userWithChats = () => {};
 
   return (
     <>
@@ -65,24 +68,30 @@ function UserProfileCard() {
           <CardHeader
             avatar={
               <Avatar aria-label="user-avatar">
-                {ProfileAvtarName(profile?.name)}
+                {ProfileAvtarName(profile?.username)}
               </Avatar>
             }
-            title={profile?.name}
-            subheader={WordLimite(profile?.text)}
+            title={profile?.username}
+            subheader={WordLimite(profile?.last_message)}
             action={
               <Box>
-                <IconButton
-                  aria-label="more"
-                  aria-controls={open ? "long-menu" : undefined}
-                  aria-expanded={open ? "true" : undefined}
-                  aria-haspopup="true"
-                  id="long-button"
-                  onClick={openIcon}
-                  sx={{ color: "inherit" }}
-                >
-                  <MoreIcon />
-                </IconButton>
+                {isAdd ? (
+                  <IconButton onClick={() => userWithChats}>
+                    <PlusOne />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    aria-label="more"
+                    aria-controls={open ? "long-menu" : undefined}
+                    aria-expanded={open ? "true" : undefined}
+                    aria-haspopup="true"
+                    id="long-button"
+                    onClick={openIcon}
+                    sx={{ color: "inherit" }}
+                  >
+                    <MoreIcon />
+                  </IconButton>
+                )}
               </Box>
             }
           />
