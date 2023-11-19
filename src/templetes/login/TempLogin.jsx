@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { route } from "../../constant/routes";
 import { useState } from "react";
 import { getUsers } from "../../services/users";
+import { useDispatch } from "react-redux";
 
 const TempLogin = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [Email, setEmail] = useState("");
 
   const HandleLogin = async (e) => {
@@ -13,8 +15,10 @@ const TempLogin = () => {
     try {
       if (!Email.trim()) throw new Error("Email is required");
       const exists = await userExists(Email);
-      console.log(exists);
-      navigate(route.dashboard);
+      if (exists) {
+        localStorage.setItem("user", JSON.stringify(exists));
+        navigate(route.dashboard);
+      }
     } catch (error) {
       alert(error.message);
     }
@@ -23,7 +27,7 @@ const TempLogin = () => {
   const userExists = async (email) => {
     try {
       const res = await getUsers();
-      const exist = res.find((data) => data?.Email === email);
+      const exist = res.find((data) => data?.email === email);
       return exist;
     } catch (error) {
       throw new Error("User not found");

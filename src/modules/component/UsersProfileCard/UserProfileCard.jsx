@@ -11,21 +11,21 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getUserData } from "../../../REDUX-slices/userSlice";
 import { route } from "../../../constant/routes";
-import { PlusOne } from "@mui/icons-material";
+import { GetDataFromLocal } from "../../../constant/common";
 
-function UserProfileCard({ userData, isAdd = false }) {
-  const users = userData;
-  const navigate = useNavigate();
+function UserProfileCard({ userData }) {
   const location = useLocation();
-  const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user.userData);
+  const currentUser = GetDataFromLocal("user");
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const openIcon = (e) => setAnchorEl(e.currentTarget);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const openIcon = (e) => setAnchorEl(e?.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
   const ProfileAvtarName = (text) => {
@@ -38,48 +38,42 @@ function UserProfileCard({ userData, isAdd = false }) {
 
   const setCurrentUser = (user) => {
     dispatch(getUserData(user));
-    if (location.pathname === route.dashboard) {
-      navigate(route.chat);
+    if (location?.pathname === route?.dashboard) {
+      navigate(route?.chat);
     }
   };
 
-  const userWithChats = () => {};
-
   return (
     <>
-      {users.map((profile, index) => (
-        <Card
-          key={index}
-          sx={{
-            margin: "3px 0",
-            backgroundColor: "inherit",
-            color: "inherit",
-            cursor: "pointer",
-            "& .MuiCardHeader-subheader": {
+      {userData &&
+        userData.map((profile, index) => (
+          <Card
+            key={index}
+            sx={{
+              margin: "3px 0",
+              backgroundColor: "inherit",
               color: "inherit",
-            },
-            "& .MuiAvatar-root": {
-              color: "inherit",
-              backgroundColor: "default",
-            },
-          }}
-          onClick={() => setCurrentUser(profile)}
-        >
-          <CardHeader
-            avatar={
-              <Avatar aria-label="user-avatar">
-                {ProfileAvtarName(profile?.username)}
-              </Avatar>
-            }
-            title={profile?.username}
-            subheader={WordLimite(profile?.last_message)}
-            action={
-              <Box>
-                {isAdd ? (
-                  <IconButton onClick={() => userWithChats}>
-                    <PlusOne />
-                  </IconButton>
-                ) : (
+              cursor: "pointer",
+              "& .MuiCardHeader-subheader": {
+                color: "inherit",
+              },
+              "& .MuiAvatar-root": {
+                color: "inherit",
+                backgroundColor: "default",
+              },
+            }}
+            onClick={() => setCurrentUser(profile)}
+          >
+            <CardHeader
+              avatar={
+                <Avatar aria-label="user-avatar">
+                  {ProfileAvtarName(profile?.username)}
+                </Avatar>
+              }
+              title={profile?.username}
+              subheader={WordLimite(profile?.last_message)}
+              action={
+                <Box>
                   <IconButton
                     aria-label="more"
                     aria-controls={open ? "long-menu" : undefined}
@@ -91,12 +85,11 @@ function UserProfileCard({ userData, isAdd = false }) {
                   >
                     <MoreIcon />
                   </IconButton>
-                )}
-              </Box>
-            }
-          />
-        </Card>
-      ))}
+                </Box>
+              }
+            />
+          </Card>
+        ))}
       <Menu
         id="long-menu"
         MenuListProps={{

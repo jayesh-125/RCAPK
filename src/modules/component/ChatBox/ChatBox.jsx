@@ -1,7 +1,7 @@
 import { Avatar, Paper, Typography } from "@mui/material";
 import React from "react";
 
-function ChatBox({ message, isUser }) {
+function ChatBox({ user, isUser }) {
   return (
     <div
       style={{
@@ -23,7 +23,7 @@ function ChatBox({ message, isUser }) {
           marginLeft: !isUser ? "10px" : "0",
         }}
       >
-        <Typography variant="body1">{message.text}</Typography>
+        <Typography variant="body1">{user.last_message? user?.last_message :"I am developer"}</Typography>
       </Paper>
       <Avatar
         style={{
@@ -34,7 +34,8 @@ function ChatBox({ message, isUser }) {
           boxShadow: "0px 1px 4px #00000055",
         }}
       >
-        {message.name.charAt(0).toUpperCase()}
+        {user?.username.charAt(0).toUpperCase()}
+        {/* {user.name.charAt(0).toUpperCase()} */}
       </Avatar>
     </div>
   );

@@ -19,6 +19,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SearchInputFilled from "../SearchInp/SearchInputField";
 import ArrowBack from "@mui/icons-material/ArrowBackIos";
 import { route } from "../../../constant/routes";
+import {
+  GetDataFromLocal,
+  RemoveUserFromLocal,
+} from "../../../constant/common";
 
 //header function
 function Header() {
@@ -28,6 +32,7 @@ function Header() {
   const [mobileanchorEl, setMobileAnchorEl] = React.useState(null);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
+  const { username } = GetDataFromLocal("user");
 
   const mobileOpen = (e) => setMobileAnchorEl(e.currentTarget);
   const defaultOpen = (e) => setAnchorEl(e.currentTarget);
@@ -130,14 +135,14 @@ function Header() {
       >
         <MenuItem
           onClick={() => {
-            defaultClose(), navigate(route.profile);
+            defaultClose(), navigate(route?.profile);
           }}
         >
           Profile
         </MenuItem>
         <MenuItem
           onClick={() => {
-            defaultClose(), navigate(route.login);
+            defaultClose(), navigate(route?.login), RemoveUserFromLocal();
           }}
         >
           LogOut
@@ -169,7 +174,30 @@ function Header() {
         </IconButton>
         <SearchInputFilled />
         <Box sx={{ flexGrow: 1 }} />
+        <Typography>{username}</Typography>
+        <Box sx={{ display: { xs: "flex", sm: "none" } }}>
+          <IconButton
+            size="large"
+            aria-label="show more"
+            aria-controls={"menu-mobile-id"}
+            aria-haspopup="true"
+            onClick={mobileOpen}
+            color="inherit"
+          >
+            <MoreIcon />
+          </IconButton>
+        </Box>
         <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+          <IconButton
+            size="large"
+            edge="end"
+            onClick={defaultOpen}
+            aria-controls={"menu-id"}
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
           <IconButton
             size="large"
             aria-label="show 17 new notifications"
@@ -193,28 +221,6 @@ function Header() {
           >
             <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
           </Popover>
-          <IconButton
-            size="large"
-            edge="end"
-            onClick={defaultOpen}
-            aria-controls={"menu-id"}
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-        </Box>
-        <Box sx={{ display: { xs: "flex", sm: "none" } }}>
-          <IconButton
-            size="large"
-            aria-label="show more"
-            aria-controls={"menu-mobile-id"}
-            aria-haspopup="true"
-            onClick={mobileOpen}
-            color="inherit"
-          >
-            <MoreIcon />
-          </IconButton>
         </Box>
       </Toolbar>
       <MobileMenu />

@@ -11,6 +11,7 @@ export const generator = () => {
       profile_image: faker.image.avatar(),
       token: faker.string.alphanumeric(20),
       username: faker.internet.userName(),
+      time: new Date(),
     };
     addUsers(user);
   }
@@ -29,5 +30,16 @@ export const messageGenerator = () => {
       to_username: faker.internet.userName(),
     };
     addMessages(user);
+  }
+};
+
+export const messageListDataGenerator = () => {
+  for (let i = 0; i < 5; i++) {
+    const message = {
+      time: new Date(),
+      text: faker.string.alpha(),
+      type : "text" || "number" || "email" || "file",
+      userId : faker.string.uuid()
+    };
   }
 };
