@@ -2,12 +2,10 @@ import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { route } from "../../constant/routes";
 import { useState } from "react";
-import { getUsers } from "../../services/users";
-import { useDispatch } from "react-redux";
+import { GETUSERSFROMDATABASE } from "../../services/users";
 
 const TempLogin = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [Email, setEmail] = useState("");
 
   const HandleLogin = async (e) => {
@@ -26,7 +24,7 @@ const TempLogin = () => {
 
   const userExists = async (email) => {
     try {
-      const res = await getUsers();
+      const res = await GETUSERSFROMDATABASE();
       const exist = res.find((data) => data?.email === email);
       return exist;
     } catch (error) {

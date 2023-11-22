@@ -1,26 +1,44 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ChatBox from "../../modules/component/ChatBox/ChatBox";
-import { userData } from "../../constant/constant";
 import { Box } from "@mui/material";
 import ChatMessageBox from "../../modules/component/Chat_Message_Box/ChatMessageBox";
-import { getUsers } from "../../services/users";
+import { GetDataFromLocal } from "../../constant/common";
+import { GETMESSAGESFROMDATABASE } from "../../services/message";
 
 function TempUserChat() {
-  const [data, setData] = useState([]);
+  const [Messages, setMessages] = useState(null);
 
-  const fetchAllUsers = async () => {
+  const activeUser = GetDataFromLocal("activeUser");
+  const user = GetDataFromLocal("user");
+
+  const fetchMessages = async () => {
     try {
-      const response = await getUsers();
-      setData(response);
+      const messagesFromFriend = await GETMESSAGESFROMDATABASE({
+        FromId: activeUser?.id,
+      });
+
+      const messagesToUser = await GETMESSAGESFROMDATABASE({
+        ToID: activeUser?.id,
+      });
+
+      // Combine and sort messages by time
+      const combinedMessages = [...messagesFromFriend, ...messagesToUser].sort(
+        (a, b) => a.last_time - b.last_time
+      );
+
+      setMessages(combinedMessages);
     } catch (error) {
-      alert(error.message);
+      console.error(error.message);
     }
   };
 
+  const handleCall = () => {
+    fetchMessages();
+  };
+
   useEffect(() => {
-    fetchAllUsers();
+    fetchMessages();
   }, []);
-  console.log(data)
 
   return (
     <>
@@ -32,9 +50,16 @@ function TempUserChat() {
           scrollbarWidth: 0,
         }}
       >
-        {data && data.map((data) => <ChatBox key={data.id} isUser={false} user={data} />)}
+        {Messages &&
+          Messages.map((data, ind) => (
+            <ChatBox
+              key={ind}
+              isUser={data.to_user_id === user?.id}
+              user={data}
+            />
+          ))}
       </Box>
-      <ChatMessageBox />
+      <ChatMessageBox callApi={handleCall} />
     </>
   );
 }

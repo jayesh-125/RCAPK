@@ -11,20 +11,18 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { getUserData } from "../../../REDUX-slices/userSlice";
 import { route } from "../../../constant/routes";
-import { GetDataFromLocal } from "../../../constant/common";
+import {
+  GetDataFromLocal,
+  RemoveDataFromLocal,
+} from "../../../constant/common";
 
 function UserProfileCard({ userData }) {
   const location = useLocation();
-  const currentUser = GetDataFromLocal("user");
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
+  const activeUser = null || GetDataFromLocal("activeUser");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const openIcon = (e) => setAnchorEl(e?.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
@@ -37,9 +35,25 @@ function UserProfileCard({ userData }) {
   };
 
   const setCurrentUser = (user) => {
-    dispatch(getUserData(user));
     if (location?.pathname === route?.dashboard) {
+      if (activeUser) {
+        RemoveDataFromLocal("activeUser");
+      }
+      localStorage.setItem("activeUser", JSON.stringify(user));
       navigate(route?.chat);
+    }
+  };
+
+  const HandleDeleteFriend = async (user) => {
+    try {
+      const friendsData = GetDataFromLocal("friend") || [];
+      const updatedFriendsData = friendsData.filter(
+        (data) => data?.id !== user?.id
+      );
+      localStorage.setItem("friend", JSON.stringify(updatedFriendsData));
+      alert("delete friend from list")
+    } catch (error) {
+      console.error(error.message);
     }
   };
 
@@ -51,7 +65,8 @@ function UserProfileCard({ userData }) {
             key={index}
             sx={{
               margin: "3px 0",
-              backgroundColor: "inherit",
+              backgroundColor:
+                profile?.id === activeUser?.id ? "#ccddcc" : "inherit",
               color: "inherit",
               cursor: "pointer",
               "& .MuiCardHeader-subheader": {
@@ -101,7 +116,7 @@ function UserProfileCard({ userData }) {
         sx={{ padding: 0, background: "#00000022" }}
       >
         <MenuItem onClick={handleClose} sx={{ padding: "0px 4px" }}>
-          <IconButton>
+          <IconButton onClick={() => HandleDeleteFriend(profile)}>
             <DeleteForeverIcon />
           </IconButton>
         </MenuItem>

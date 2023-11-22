@@ -8,9 +8,9 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import UserProfileCard from "../UsersProfileCard/UserProfileCard";
-import { getUsers } from "../../../services/users";
+import { GETUSERSFROMDATABASE } from "../../../services/users";
 import { GetDataFromLocal } from "../../../constant/common";
 
 function Sidebar() {
@@ -25,7 +25,7 @@ function Sidebar() {
 
   const getAllUser = async () => {
     try {
-      const result = await getUsers();
+      const result = await GETUSERSFROMDATABASE();
       setUsers(result);
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -44,6 +44,7 @@ function Sidebar() {
         })
       );
     }
+
     getAllUser();
   }, []);
 
@@ -53,18 +54,24 @@ function Sidebar() {
       (data) => data?.username.toLowerCase() === query
     );
 
-    const AddUserInList = () => {
-      if (filterData) {
+    const AddUserInList = async () => {
+      try {
         const data = GetDataFromLocal("friend") || [];
-        const newData = [...data, ...filterData];
-        localStorage.setItem("friend", JSON.stringify(newData));
-        handleClose(); // Close the popover after adding a friend
+
+        if (filterData) {
+          const newData = [...data, ...filterData];
+          localStorage.setItem("friend", JSON.stringify(newData));
+          handleClose();
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        alert("An error occurred while fetching user data.");
       }
     };
 
-    useMemo(() => {
+    useCallback(() => {
       getAllUser();
-    }, [filterData]);
+    }, [query]);
 
     return (
       <Popover

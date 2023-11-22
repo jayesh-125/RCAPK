@@ -1,18 +1,39 @@
 import { EmojiEmotions, Send } from "@mui/icons-material";
 import { Box, Container, Grid, IconButton, TextField } from "@mui/material";
-import { Picker } from "emoji-mart";
-import React, { useState } from "react";
+// import { Picker } from "emoji-mart";
+import React, { useEffect, useState } from "react";
+import { GetDataFromLocal } from "../../../constant/common";
+import { ADDNEWRELATIONFROMDATABASE } from "../../../services/message";
+import { UPDATEUSERBYIDINDATABASE } from "../../../services/users";
 
-function ChatMessageBox() {
+function ChatMessageBox({ callApi }) {
   const [message, setMessage] = useState("");
+  const user = GetDataFromLocal("user");
+  const activeUser = GetDataFromLocal("activeUser");
+  const handleChangeInput = (e) => setMessage(e?.target?.value);
 
-  const handleChangeInput = (e) => setMessage(e.target.value);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(message);
-    setMessage("");
+  const HandleSendMessage = async () => {
+    try {
+      const data = {
+        from_name: activeUser?.username,
+        from_profile_image: activeUser?.imgUrl,
+        from_user_id: activeUser?.id,
+        last_message: message,
+        last_time: Date.now(),
+        to_profile_image: user?.imgUrl,
+        to_user_id: user?.id,
+        to_username: user?.username,
+      };
+      const response = await ADDNEWRELATIONFROMDATABASE(data); //pending work
+      // const secondRes = await UPDATEUSERBYIDINDATABASE()
+      callApi();
+      setMessage("");
+    } catch (error) {
+      console.error(error?.message);
+    }
   };
+
+  useEffect(() => {}, []);
 
   return (
     <Container
@@ -49,7 +70,7 @@ function ChatMessageBox() {
           />
         </Grid>
         <Grid item xs={1}>
-          <IconButton aria-label="message" onClick={handleSubmit}>
+          <IconButton aria-label="message" onClick={HandleSendMessage}>
             <Send />
           </IconButton>
         </Grid>

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { addUsers } from "../services/users";
-import { addMessages } from "../services/message";
+import { ADDUSERINDATABASE } from "../services/users";
+import { ADDNEWRELATIONFROMDATABASE } from "../services/message";
 
 export const generator = () => {
   for (let i = 0; i < 5; i++) {
@@ -13,7 +13,7 @@ export const generator = () => {
       username: faker.internet.userName(),
       time: new Date(),
     };
-    addUsers(user);
+    ADDUSERINDATABASE(user);
   }
 };
 export const messageGenerator = () => {
@@ -29,17 +29,22 @@ export const messageGenerator = () => {
       to_user_id: faker.string.uuid(),
       to_username: faker.internet.userName(),
     };
-    addMessages(user);
+    ADDNEWRELATIONFROMDATABASE(user);
   }
 };
 
-export const messageListDataGenerator = () => {
-  for (let i = 0; i < 5; i++) {
-    const message = {
-      time: new Date(),
-      text: faker.string.alpha(),
-      type : "text" || "number" || "email" || "file",
-      userId : faker.string.uuid()
-    };
+
+export function GenerateUniqueId() {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const idLength = 20;
+
+  let uniqueId = "";
+
+  for (let i = 0; i < idLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    uniqueId += characters.charAt(randomIndex);
   }
-};
+
+  return uniqueId;
+}

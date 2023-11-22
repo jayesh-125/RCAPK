@@ -2,19 +2,18 @@ import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userModel } from "../../constant/constant";
-import { addUsers, getUsers } from "../../services/users";
+import { ADDUSERINDATABASE, GETUSERSFROMDATABASE } from "../../services/users";
 import { route } from "../../constant/routes";
-import { v4 as uuidv4 } from "uuid";
+import { GenerateUniqueId } from "../../constant/dataGenerator";
 
 const TempSignUp = () => {
-  const uniqueId = uuidv4();
   const navigate = useNavigate();
   const [signUpData, setSignUpData] = useState(userModel);
 
   const handleInputChangeOfRegister = (e) => {
     const { name, value } = e.target;
     setSignUpData((prev) => ({ ...prev, [name]: value }));
-    setSignUpData((prev) => ({ ...prev, ["id"]: uniqueId }));
+    setSignUpData((prev) => ({ ...prev, ["id"]: GenerateUniqueId() }));
   };
 
   const handleRegister = async () => {
@@ -26,8 +25,8 @@ const TempSignUp = () => {
         navigate(route.login);
         throw new Error("You have already account please login");
       }
-      const res = await addUsers(signUpData);
-      navigate(route.dashboard);
+      const res = await ADDUSERINDATABASE(signUpData);
+      navigate(route.login);
     } catch (error) {
       alert(error.message);
     }
@@ -35,7 +34,7 @@ const TempSignUp = () => {
 
   const userExists = async (email) => {
     try {
-      const res = await getUsers();
+      const res = await GETUSERSFROMDATABASE();
       return res.some((item) => item?.email === email);
     } catch (error) {
       return false;
@@ -91,7 +90,7 @@ const TempSignUp = () => {
             name="email"
             autoComplete="email"
             type="email"
-            color="success" 
+            color="success"
             sx={{ marginBottom: "1rem" }}
             size="small"
             value={signUpData?.email}

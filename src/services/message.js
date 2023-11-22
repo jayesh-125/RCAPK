@@ -1,49 +1,75 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase";
 
-//get all datas
-export const getMessages = () => {
-  const getMessageData = collection(db, "/messages");
+// Function to get messages between two users
+export const GETMESSAGESFROMDATABASE = async ({ FromId, ToID }) => {
+  const messagesCollection = collection(db, "messages");
+
   try {
-    getDoc(getMessageData).then((data) => {
-      return data;
-    });
+    if (FromId) {
+      const fromUserQuery = query(
+        messagesCollection,
+        where("from_user_id", "==", FromId)
+      );
+      const fromUserSnapshot = await getDocs(fromUserQuery);
+      return fromUserSnapshot.docs.map((doc) => doc.data());
+    }
+
+    if (ToID) {
+      const toUserQuery = query(
+        messagesCollection,
+        where("to_user_id", "==", ToID)
+      );
+      const toUserSnapshot = await getDocs(toUserQuery);
+      return toUserSnapshot.docs.map((doc) => doc.data());
+    }
+
+    const allUserSnapshot = await getDoc(messagesCollection);
+    return allUserSnapshot.docs.map((doc) => doc.data());
   } catch (error) {
-    console.log("Something went wrong", error);
+    console.error("Error fetching messages:", error.message);
+    throw error;
   }
 };
 
 //update data by ID
-export const updateMessageById = (data) => {
+export const UPDATERELATIONFORMDATABASE = (data) => {
   const updateMessageData = doc(db, "/messages", data.id);
   try {
-    updateDoc(updateMessageData).then(() => {
-      return { message: "Data update Successfully" };
-    });
+    updateDoc(updateMessageData);
+    return { message: "Message update Successfully" };
   } catch (error) {
     console.log("Something went wrong", error);
   }
 };
 
 //store messages
-export const addMessages = (data) => {
+export const ADDNEWRELATIONFROMDATABASE = (data) => {
   const addMessageData = collection(db, "/messages");
   try {
-    addDoc(addMessageData, data).then(() => {
-      return { message: "Data Store Successfully" };
-    });
+    addDoc(addMessageData, data);
+    return { message: "Message Send Successfully" };
   } catch (error) {
     console.log("Something went wrong", error);
   }
 };
 
 //delete data by id
-export const deleteMessages = (id) => {
+export const DELETERELATIONFROMDATABSE = (id) => {
   const deleteMessageData = doc(db, "/messages", id);
   try {
-    deleteDoc(deleteMessageData).then((data) => {
-      return { message: "Data Delete Successfully" };
-    });
+    deleteDoc(deleteMessageData);
+    return { message: "Message Delete Successfully" };
   } catch (error) {
     console.log("Something went wrong", error);
   }

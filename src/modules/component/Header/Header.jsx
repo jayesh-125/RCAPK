@@ -21,7 +21,7 @@ import ArrowBack from "@mui/icons-material/ArrowBackIos";
 import { route } from "../../../constant/routes";
 import {
   GetDataFromLocal,
-  RemoveUserFromLocal,
+  RemoveDataFromLocal,
 } from "../../../constant/common";
 
 //header function
@@ -142,7 +142,7 @@ function Header() {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            defaultClose(), navigate(route?.login), RemoveUserFromLocal();
+            defaultClose(), navigate(route?.login), RemoveDataFromLocal("user");
           }}
         >
           LogOut
