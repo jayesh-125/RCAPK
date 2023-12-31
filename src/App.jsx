@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import UserDashboardPage from "./pages/userdashboard/UserDashboardPage";
-import LoginPage from "./pages/login/LoginPage";
-import UserProfilePage from "./pages/userprofile/UserProfilePage";
-import UserChatPage from "./pages/userchat/UserChatPage";
-import SignUp from "./pages/signup/SIgnUp";
+import UserDashboardPage from "./pages/UserDashboardPage";
+import LoginPage from "./pages/LoginPage";
+import UserProfilePage from "./pages/UserProfilePage";
+import UserChatPage from "./pages/UserChatPage";
+import SignUp from "./pages/SIgnUp";
 import { route } from "./constant/routes";
 
 function App() {

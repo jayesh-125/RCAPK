@@ -34,10 +34,10 @@ export const GETUSERBYIDFROMDATABASE = async (id) => {
 
 //update data by ID
 export const UPDATEUSERBYIDINDATABASE = (data) => {
-  const updateUserData = doc(db, "users", data.id);
+  const updateUserData = doc(db, "users", data.from_user_id);
   try {
     updateDoc(updateUserData);
-    return { message: "User update Successfully" };
+    return { message: "User update Successfully", data: updateUserData };
   } catch (error) {
     console.log("Something went wrong", error);
   }
@@ -47,8 +47,8 @@ export const UPDATEUSERBYIDINDATABASE = (data) => {
 export const ADDUSERINDATABASE = (data) => {
   const addUserData = collection(db, "users");
   try {
-    addDoc(addUserData, data)
-      return { message: "User Store Successfully" };
+    addDoc(addUserData, data);
+    return { message: "User Store Successfully", data: addUserData };
   } catch (error) {
     console.log("Something went wrong", error);
   }
@@ -59,8 +59,8 @@ export const DELETEUSERFROMDATABASE = (id) => {
   const deleteUserData = doc(db, "users", id);
   console.log(id);
   try {
-    deleteDoc(deleteUserData)
-      return { message: "User Delete Successfully" };
+    deleteDoc(deleteUserData);
+    return { message: "User Delete Successfully" };
   } catch (error) {
     console.log("Something went wrong", error);
   }
