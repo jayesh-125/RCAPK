@@ -1,10 +1,10 @@
 import { Avatar, Paper, Typography } from "@mui/material";
 import React from "react";
-import { GetDataFromLocal } from "../constant/common";
 
-const activeUser = GetDataFromLocal("user");
+function ChatBox({ data, auth, friend }) {
+  const isUser = data?.fromUserId === auth?._id;
+  const isFriend = data?.fromUserId === friend?._id;
 
-function ChatBox({ user, isUser }) {
   return (
     <div
       style={{
@@ -27,7 +27,7 @@ function ChatBox({ user, isUser }) {
         }}
       >
         <Typography variant="body1">
-          {user.last_message ? user?.last_message : "I am developer"}
+          {data?.lastMessage || "I am developer"}
         </Typography>
       </Paper>
       <Avatar
@@ -39,8 +39,9 @@ function ChatBox({ user, isUser }) {
           boxShadow: "0px 1px 4px #00000055",
         }}
       >
-        {activeUser?.username.charAt(0).toUpperCase()}
-        {/* {user.name.charAt(0).toUpperCase()} */}
+        {isFriend
+          ? friend?.username.charAt(0).toUpperCase()
+          : auth?.username.charAt(0).toUpperCase()}
       </Avatar>
     </div>
   );

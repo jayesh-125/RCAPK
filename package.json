@@ -2,6 +2,7 @@
   "name": "indchat",
   "private": true,
   "version": "0.0.0",
+  "main": "server/index.mjs",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,6 +20,7 @@
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.10",
     "@reduxjs/toolkit": "^1.9.5",
+    "axios": "^1.6.5",
     "emoji-mart": "^5.5.2",
     "firebase": "^10.4.0",
     "react": "^18.2.0",

@@ -8,6 +8,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { ApiUrl } from "./auth";
 
 //get all datas
 export const GETUSERSFROMDATABASE = async () => {
@@ -65,3 +66,4 @@ export const DELETEUSERFROMDATABASE = (id) => {
     console.log("Something went wrong", error);
   }
 };
+

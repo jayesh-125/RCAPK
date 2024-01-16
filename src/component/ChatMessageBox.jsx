@@ -1,39 +1,37 @@
 import { EmojiEmotions, Send } from "@mui/icons-material";
-import { Box, Container, Grid, IconButton, TextField } from "@mui/material";
+import { Container, Grid, IconButton, TextField } from "@mui/material";
 // import { Picker } from "emoji-mart";
-import React, { useState } from "react";
-import { GetDataFromLocal } from "../constant/common";
-import { ADDNEWRELATIONFROMDATABASE } from "../services/message";
-import { UPDATEUSERBYIDINDATABASE } from "../services/users";
-import { useDispatch } from "react-redux";
+import React, { useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsSend } from "../redux/callSlice";
+import { SendMessageToFriend } from "../services/auth";
+import { setMessageList } from "../redux/messageSlice";
+import { startLoading, stopLoading } from "../redux/loaderSlice";
 
 function ChatMessageBox() {
   const [message, setMessage] = useState("");
-  const user = GetDataFromLocal("user");
   const dispatch = useDispatch();
-  const activeUser = GetDataFromLocal("activeUser");
+  const authUser = useSelector((s) => s.auth.authUser);
+  const activeFriend = useSelector((s) => s.user.activeFriend);
+
   const handleChangeInput = (e) => setMessage(e?.target?.value);
+
   const HandleSendMessage = async () => {
     try {
       const data = {
-        from_name: activeUser?.username,
-        from_profile_image: activeUser?.imgUrl,
-        from_user_id: activeUser?.id,
-        last_message: message,
-        last_time: Date.now(),
-        to_profile_image: user?.imgUrl,
-        to_user_id: user?.id,
-        to_username: user?.username,
+        fromUserId: authUser?._id,
+        lastMessage: message,
+        toUserId: activeFriend?._id,
       };
-      const response = await ADDNEWRELATIONFROMDATABASE(data); //pending work
-      const secondRes = await UPDATEUSERBYIDINDATABASE(data)
-      console.log(secondRes.data)
-      // set is message is send
-      dispatch(setIsSend(true))
-      setMessage("");
+      dispatch(startLoading());
+      const res = await SendMessageToFriend(data);
+      dispatch(setMessageList(res?.data));
+      dispatch(setIsSend(true));
     } catch (error) {
       console.error(error?.message);
+    } finally {
+      dispatch(stopLoading());
+      setMessage("");
     }
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Badge,
@@ -19,21 +19,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SearchInputFilled from "./SearchInputField";
 import ArrowBack from "@mui/icons-material/ArrowBackIos";
 import { route } from "../constant/routes";
-import {
-  GetDataFromLocal,
-  RemoveDataFromLocal,
-} from "../constant/common";
+import { GetDataFromLocal, RemoveDataFromLocal } from "../constant/common";
+import { SignOutUser } from "../services/auth";
+import { useSelector } from "react-redux";
 
 //header function
 function Header() {
   //constant
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileanchorEl, setMobileAnchorEl] = React.useState(null);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
-  const { username } = GetDataFromLocal("user");
-
+  const [mobileanchorEl, setMobileAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [notiAnchorEl, setNotiAnchorEl] = useState(null);
+  const { username } = GetDataFromLocal("authUser");
   const mobileOpen = (e) => setMobileAnchorEl(e.currentTarget);
   const defaultOpen = (e) => setAnchorEl(e.currentTarget);
   const notificationOpen = (e) => setNotiAnchorEl(e.currentTarget);
@@ -41,9 +39,11 @@ function Header() {
   const defaultClose = () => {
     mobileClose(), setAnchorEl(null);
   };
+
   const mobileClose = () => {
     setMobileAnchorEl(null);
   };
+
   const notificationClose = () => {
     setNotiAnchorEl(null);
   };
@@ -53,6 +53,19 @@ function Header() {
       navigate(route.login);
     } else {
       window.history.back();
+    }
+  };
+
+  const handleLogOut = async () => {
+    try {
+      const res = await SignOutUser();
+      if (res) {
+        defaultClose();
+        navigate(route?.login);
+        RemoveDataFromLocal("user");
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -140,13 +153,7 @@ function Header() {
         >
           Profile
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            defaultClose(), navigate(route?.login), RemoveDataFromLocal("user");
-          }}
-        >
-          LogOut
-        </MenuItem>
+        <MenuItem onClick={handleLogOut}>LogOut</MenuItem>
       </Menu>
     );
   };

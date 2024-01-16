@@ -1,43 +1,38 @@
 import { TextField, Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { GetDataFromLocal } from "../constant/common";
-import { UPDATEUSERBYIDINDATABASE } from "../services/users";
+import { UpdateUserById } from "../services/auth";
 
 function UserProfileForm() {
-
-  const activeUser = useSelector((state) => { state.user.active }) || GetDataFromLocal('activeUser')
-  const [changes, setIsChanges] = useState(false)
+  const [changes, setIsChanges] = useState(false);
+  const authUser = useSelector((s) => s.auth.authUser);
 
   const [formData, setFormData] = useState({
-    username: activeUser?.username,
-    email: activeUser?.email,
-    phoneNo: activeUser?.phoneNo,
+    username: authUser?.username,
+    email: authUser?.email,
+    phoneNo: authUser?.phoneNo,
   });
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
-    if (activeUser?.username !== formData.username ||
+    if (
+      activeUser?.username !== formData.username ||
       activeUser.email !== formData.email ||
-      activeUser.phoneNo !== formData.phoneNo) {
+      activeUser.phoneNo !== formData.phoneNo
+    ) {
       setFormData({ ...formData, [name]: value });
-      setIsChanges(true)
+      setIsChanges(true);
     } else {
-      setIsChanges(false)
-      return
+      setIsChanges(false);
+      return;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      formData.id = activeUser.id
-      const res = await UPDATEUSERBYIDINDATABASE(formData)
-      if (res) {
-        return console.log(res)
-      } else {
-        throw new Error("response not found.")
-      }
+      const res = await UpdateUserById(authUser?._id, formData);
+      setFormData((prev) => ({ ...prev, ...res?.data }));
     } catch (error) {
       console.error("error", error.message);
     }
@@ -63,16 +58,6 @@ function UserProfileForm() {
         color="success"
         sx={{ marginBottom: "1rem" }}
         value={formData?.email}
-        onChange={handleInputChange}
-      />
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="Enter your Phone Number"
-        name="phoneNo"
-        color="success"
-        sx={{ marginBottom: "1rem" }}
-        value={formData?.phoneNo}
         onChange={handleInputChange}
       />
       <Button

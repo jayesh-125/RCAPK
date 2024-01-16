@@ -49,10 +49,9 @@ export const userData = [
 export const userModel = {
   id: "",
   email: "",
-  phoneNo: 0,
+  password: "",
   username: "",
   imgUrl: "",
-  last_message: "",
 };
 
 export const messageModel = {

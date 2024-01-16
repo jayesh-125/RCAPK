@@ -2,33 +2,38 @@ import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { route } from "../constant/routes";
 import { useState } from "react";
-import { GETUSERSFROMDATABASE } from "../services/users";
+import { LoginUser, SignUserAuth } from "../services/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthUser } from "../redux/authSlice";
 
 const TempLogin = () => {
   const navigate = useNavigate();
-  const [Email, setEmail] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
-  const HandleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      if (!Email.trim()) throw new Error("Email is required");
-      const exists = await userExists(Email);
-      if (exists) {
-        localStorage.setItem("user", JSON.stringify(exists));
-        navigate(route.dashboard);
-      }
-    } catch (error) {
-      alert(error.message);
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const userExists = async (email) => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      const res = await GETUSERSFROMDATABASE();
-      const exist = res.find((data) => data?.email === email);
-      return exist;
+      if (!formData?.email?.trim() || !formData?.password?.trim()) {
+        throw new Error("Email and password are required");
+      }
+      const fbRes = await SignUserAuth(formData?.email, formData?.password);
+      const res = await LoginUser({ ...formData });
+      if (res) {
+        dispatch(setAuthUser(res?.data));
+        localStorage.setItem("authUser", JSON.stringify(res?.data));
+        navigate(route.dashboard);
+      } else {
+        throw new Error("User not found.");
+      }
     } catch (error) {
-      throw new Error("User not found");
+      setError(error.message);
     }
   };
 
@@ -54,7 +59,7 @@ const TempLogin = () => {
           }}
         >
           <Typography
-            color={"green"}
+            color="green"
             fontSize={24}
             fontWeight={600}
             marginBottom={5}
@@ -70,30 +75,37 @@ const TempLogin = () => {
             color="success"
             sx={{ marginBottom: "1rem" }}
             size="small"
-            value={Email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleInputChange}
           />
-          {/* OR */}
-          {/* <TextField
+          <TextField
             fullWidth
             variant="filled"
-            label="Enter Your Mobile Number"
-            name="email"
-            type="email"
+            label="Enter Your Password"
+            name="password"
+            type="password"
             color="success"
             sx={{ marginBottom: "1rem" }}
             size="small"
-          /> */}
+            value={formData.password}
+            onChange={handleInputChange}
+          />
           <Button
             type="submit"
             variant="contained"
             sx={{ marginTop: "1rem", background: "#555555" }}
-            onClick={HandleLogin}
+            onClick={handleLogin}
           >
             Login
           </Button>
+          {error && (
+            <Typography color="error" sx={{ marginTop: "1rem" }}>
+              {error}
+            </Typography>
+          )}
           <Typography>
-            If you are new User ? Please <Link to={route.sign_up}>Sign-up</Link>
+            If you are a new user? Please{" "}
+            <Link to={route.sign_up}>Sign-up</Link>
           </Typography>
         </div>
       </Grid>

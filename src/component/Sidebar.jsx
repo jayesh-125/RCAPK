@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -8,108 +8,58 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import { Add } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
 import UserProfileCard from "./UserProfileCard";
-import { GETUSERSFROMDATABASE } from "../services/users";
-import { GetDataFromLocal } from "../constant/common";
-import { useDispatch } from "react-redux";
-import { setFriendList, setListofUser } from "../redux/userSlice";
+import { AddFriendUser, GetAllUesrs } from "../services/auth";
+import { setFriendList } from "../redux/userSlice";
 
 function Sidebar() {
-  const [anchorEl, setanchorEl] = useState(null);
-  const [users, setUsers] = useState(null);
-  const [friends, setFriends] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [add, setAdd] = useState(null);
+  const [query, setQuery] = useState("");
+  const authUser = useSelector((s) => s.auth.authUser);
+  const friends = useSelector((s) => s.user.friendList);
+  const dispatch = useDispatch();
 
-  const open = Boolean(anchorEl);
-  const id = open ? "open-popover" : undefined;
-  const currentUser = GetDataFromLocal("user");
+  const handleOpenAddFriend = (e) => {
+    setAnchorEl(e?.currentTarget);
+  };
 
-  const dispatch = useDispatch()
-  const handleClose = () => setanchorEl(null);
-  const handleOpenAddFriend = (e) => setanchorEl(e?.currentTarget);
+  const handleClose = () => {
+    setAnchorEl(null);
+    setQuery("");
+    setUsers([]);
+  };
 
-  const getAllUser = async () => {
+  const addFriend = async (f) => {
     try {
-      const result = await GETUSERSFROMDATABASE();
-      dispatch(setListofUser(result))
-      setUsers(result);
+      let data = {};
+      data.friendId = authUser?._id;
+      data.username = f?.username;
+      data.lastMessage = f.lastMessage || "";
+      const res = await AddFriendUser(data);
+      dispatch(setFriendList(res?.data));
     } catch (error) {
       console.error("Error fetching user data:", error);
       alert("An error occurred while fetching user data.");
     }
   };
 
+  const getAllUsers = async () => {
+    try {
+      const res = await GetAllUesrs(query);
+      setUsers(res.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      alert("An error occurred while fetching user data.");
+    }
+  };
 
   useEffect(() => {
-    const list = GetDataFromLocal("friend") || [];
-    if (currentUser) {
-      setFriends(list.filter((data) => {
-        return data?.username !== currentUser?.username
-      }));
-    }
-    getAllUser();
-  }, []);
-
-  const AddFriendBox = () => {
-    const [query, setQuery] = useState("");
-    const filterData = users?.filter((data) => data?.username.toLowerCase() === query);
-    const data = GetDataFromLocal("friend") || [];
-
-    const AddUserInList = async () => {
-      try {
-        if (filterData) {
-          const newData = [...data, ...filterData];
-          localStorage.setItem("friend", JSON.stringify(newData));
-          dispatch(setFriendList(filterData))
-          handleClose();
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        alert("An error occurred while fetching user data.");
-      }
-    };
-
-    useCallback(() => {
-      getAllUser();
-    }, [query]);
-
-    return (
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <TextField
-          sx={{ margin: "20px" }}
-          variant="standard"
-          placeholder="Add friend"
-          color="success"
-          name="search"
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e?.target?.value)}
-        />
-        {filterData &&
-          filterData.map((data) => (
-            <Box sx={{ marginTop: "20px", padding: "20px" }} key={data?.id}>
-              <span>{data?.username}</span>
-              <Button color="success" onClick={AddUserInList}>
-                Add
-              </Button>
-            </Box>
-          ))}
-      </Popover>
-    );
-  };
+    query && getAllUsers();
+  }, [query]);
 
   return (
     <>
@@ -121,12 +71,12 @@ function Sidebar() {
             fontWeight: 600,
           }}
         >
-          Add Friens
+          Add Friends
         </Typography>
         <Box flexGrow={1} />
         <IconButton
           aria-label="display more actions"
-          aria-describedby={id}
+          aria-describedby={anchorEl ? "open-popover" : undefined}
           onClick={handleOpenAddFriend}
           edge="end"
           sx={{ color: "#ffffff" }}
@@ -156,7 +106,49 @@ function Sidebar() {
       >
         <UserProfileCard userData={friends} />
       </Box>
-      <AddFriendBox />
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <TextField
+          sx={{ margin: "20px" }}
+          variant="standard"
+          placeholder="Add friend"
+          color="success"
+          name="search"
+          type="text"
+          id="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        {users
+          ? users.map((data) => (
+              <Box
+                sx={{
+                  marginTop: "10px",
+                  padding: "10px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+                key={data?._id}
+              >
+                <span>{data?.username}</span>
+                <Button color="success" onClick={() => addFriend(data)}>
+                  Add
+                </Button>
+              </Box>
+            ))
+          : null}
+      </Popover>
     </>
   );
 }

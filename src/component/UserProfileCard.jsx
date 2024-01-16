@@ -9,62 +9,59 @@ import {
   MenuItem,
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { route } from "../constant/routes";
-import {
-  GetDataFromLocal,
-  RemoveDataFromLocal,
-} from "../constant/common";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveFriend } from "../redux/userSlice";
+import { DeleteFriend } from "../services/auth";
 
-function UserProfileCard({ userData, setRenderData }) {
-  const location = useLocation();
+function UserProfileCard({ userData }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const activeUser = null || GetDataFromLocal("activeUser");
+  const authUser = useSelector((s) => s.auth.authUser);
+  const activeFriend = useSelector((s) => s.user.activeFriend);
 
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const openIcon = (e) => setAnchorEl(e?.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
   const ProfileAvtarName = (text) => {
-    return text.charAt(0).toUpperCase();
+    return text?.charAt(0).toUpperCase();
   };
 
   const WordLimite = (text) => {
     return text.slice(0, 22) + "...";
   };
 
-  const setCurrentUser = (user) => {
-    if (location?.pathname === route?.dashboard) {
-      if (activeUser) { RemoveDataFromLocal("activeUser") }
-      localStorage.setItem("activeUser", JSON.stringify(user));
-      navigate(route?.chat);
-    }
-  };
-
   const HandleDeleteFriend = async (user) => {
     try {
-      const friendsData = GetDataFromLocal("friend") || [];
-      const updatedFriendsData = friendsData.filter((data) => data?.id !== user?.id);
-      localStorage.setItem("friend", JSON.stringify(updatedFriendsData));
-      alert("delete friend from list")
-      setRenderData(true)
+      const res = await DeleteFriend(user?._id);
     } catch (error) {
       console.error(error.message);
     }
   };
 
+  const setFriend = (user) => {
+    if (user) {
+      dispatch(setActiveFriend(user));
+    } else if (userData) {
+      dispatch(setActiveFriend(userData[0]));
+    }
+  };
+
+  useEffect(() => {
+    setFriend();
+  }, [authUser]);
+
   return (
     <>
       {userData &&
-        userData.map((profile, index) => (
+        userData.map((user, index) => (
           <Card
             key={index}
             sx={{
               margin: "3px 0",
               backgroundColor:
-                profile?.id === activeUser?.id ? "#ccddcc" : "inherit",
+                user?._id === activeFriend?._id ? "#ccddcc" : "inherit",
               color: "inherit",
               cursor: "pointer",
               "& .MuiCardHeader-subheader": {
@@ -75,16 +72,16 @@ function UserProfileCard({ userData, setRenderData }) {
                 backgroundColor: "default",
               },
             }}
-            onClick={() => setCurrentUser(profile)}
+            onClick={() => setFriend(user)}
           >
             <CardHeader
               avatar={
                 <Avatar aria-label="user-avatar">
-                  {ProfileAvtarName(profile?.username)}
+                  {ProfileAvtarName(user?.username)}
                 </Avatar>
               }
-              title={profile?.username}
-              subheader={WordLimite(profile?.last_message)}
+              title={user?.username}
+              subheader={WordLimite(user?.lastMessage)}
               action={
                 <Box>
                   <IconButton
@@ -112,7 +109,7 @@ function UserProfileCard({ userData, setRenderData }) {
               sx={{ padding: 0, background: "#00000022" }}
             >
               <MenuItem onClick={handleClose} sx={{ padding: "0px 4px" }}>
-                <IconButton onClick={() => HandleDeleteFriend(profile)}>
+                <IconButton onClick={() => HandleDeleteFriend(user)}>
                   <DeleteForeverIcon />
                 </IconButton>
               </MenuItem>

@@ -1,51 +1,46 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChatBox from "../component/ChatBox";
 import { Box } from "@mui/material";
 import ChatMessageBox from "../component/ChatMessageBox";
-import { GetDataFromLocal } from "../constant/common";
-import { GETMESSAGESFROMDATABASE } from "../services/message";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { route } from "../constant/routes";
+import { GetAllMessage } from "../services/auth";
+import { setMessageList } from "../redux/messageSlice";
+import { startLoading, stopLoading } from "../redux/loaderSlice";
 
 function TempUserChat() {
-  const [Messages, setMessages] = useState(null);
-  const isSend = useSelector((state) => state.call.isSend)
-  const fl = GetDataFromLocal("friend");
-  const activeUser = GetDataFromLocal("activeUser");
-  const user = GetDataFromLocal("user");~~
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const messages = useSelector((s) => s.message.list);
+  const authUser = useSelector((s) => s.auth.authUser);
+  const activeFriend = useSelector((s) => s.user.activeFriend);
+  const [list, setList] = useState();
 
-  const fetchMessages = async () => {
+  const fetchAllMessage = async () => {
     try {
-      const messagesFromFriend = await GETMESSAGESFROMDATABASE({
-        FromId: activeUser?.id,
+      dispatch(startLoading());
+      const res = await GetAllMessage({
+        uid: authUser?._id,
+        fid: activeFriend?._id,
       });
-
-      const messagesToUser = await GETMESSAGESFROMDATABASE({
-        ToID: activeUser?.id,
-      });
-
-      // Combine and sort messages by time
-      const combinedMessages = [...messagesFromFriend, ...messagesToUser].sort(
-        (a, b) => a.last_time - b.last_time
-      );
-
-      setMessages(combinedMessages);
+      dispatch(setMessageList(res?.data));
     } catch (error) {
-      console.error(error.message);
+      console.log(error.message);
+    } finally {
+      dispatch(stopLoading());
     }
   };
 
   useEffect(() => {
-    fetchMessages();
-  }, [isSend]);
-
-  useEffect(() => {
-    if (fl.length === 0) {
-      navigate(route.dashboard)
+    if (authUser?._id && activeFriend?._id) {
+      fetchAllMessage();
+      setList(
+        [...messages]?.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        )
+      );
     }
-  }, [])
+  }, [authUser, activeFriend]);
 
   return (
     <>
@@ -57,13 +52,16 @@ function TempUserChat() {
           scrollbarWidth: 0,
         }}
       >
-        {fl.length > 0 && Messages && Messages.map((data, ind) => (
-          <ChatBox
-            key={ind}
-            isUser={data.to_user_id === user?.id}
-            user={data}
-          />
-        ))}
+        {list
+          ? list.map((data, ind) => (
+              <ChatBox
+                key={ind}
+                data={data}
+                auth={authUser}
+                friend={activeFriend}
+              />
+            ))
+          : null}
       </Box>
       <ChatMessageBox />
     </>

@@ -1,70 +1,63 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userModel } from "../constant/constant";
-import { ADDUSERINDATABASE, GETUSERSFROMDATABASE } from "../services/users";
 import { route } from "../constant/routes";
 import { GenerateUniqueId } from "../constant/dataGenerator";
+import { CreateUserAuth, SignUpUser } from "../services/auth";
+
+const containerStyle = {
+  justifyContent: "center",
+  alignContent: "center",
+  height: "100vh",
+  background: "#55555522",
+};
+
+const formContainerStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "#ffffff",
+  padding: "30px",
+};
 
 const TempSignUp = () => {
   const navigate = useNavigate();
   const [signUpData, setSignUpData] = useState(userModel);
 
-  const handleInputChangeOfRegister = (e) => {
-    const { name, value } = e.target;
-    setSignUpData((prev) => ({ ...prev, [name]: value }));
-    setSignUpData((prev) => ({ ...prev, ["id"]: GenerateUniqueId() }));
+  const handleInputChange = ({ target: { name, value } }) => {
+    setSignUpData((prev) => ({
+      ...prev,
+      [name]: value,
+      id: GenerateUniqueId(),
+    }));
   };
 
-  const handleRegister = async () => {
+  const handleRegisterClick = async () => {
     try {
-      if (!signUpData.username.trim()) throw new Error("Username is required");
-      if (!signUpData.email.trim()) throw new Error("email is required");
-      const exists = await userExists(signUpData?.email);
-      if (exists) {
-        navigate(route.login);
-        throw new Error("You have already account please login");
+      if (!signUpData?.username?.trim())
+        throw new Error("Username is required");
+      if (!signUpData?.email?.trim()) throw new Error("Email is required");
+
+      await CreateUserAuth(signUpData.email, signUpData.password);
+      const res = await SignUpUser({ ...signUpData })?.data;
+
+      if (!res) {
+        navigate(route.sign_up);
       }
-      const res = await ADDUSERINDATABASE(signUpData);
-      console.log(res.data)
       navigate(route.login);
     } catch (error) {
       alert(error.message);
     }
   };
 
-  const userExists = async (email) => {
-    try {
-      const res = await GETUSERSFROMDATABASE();
-      return res.some((item) => item?.email === email);
-    } catch (error) {
-      return false;
-    }
-  };
-
   return (
-    <Grid
-      container
-      sx={{
-        justifyContent: "center",
-        alignContent: "center",
-        height: "100vh",
-        background: "#55555522",
-      }}
-    >
+    <Grid container sx={containerStyle}>
       <Grid item sm={4}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#ffffff",
-            padding: "30px",
-          }}
-        >
+        <div style={formContainerStyle}>
           <Typography
-            color={"green"}
+            color="green"
             fontSize={24}
             fontWeight={600}
             marginBottom={5}
@@ -82,7 +75,7 @@ const TempSignUp = () => {
             sx={{ marginBottom: "1rem" }}
             size="small"
             value={signUpData?.username}
-            onChange={(e) => handleInputChangeOfRegister(e)}
+            onChange={handleInputChange}
           />
           <TextField
             fullWidth
@@ -95,30 +88,30 @@ const TempSignUp = () => {
             sx={{ marginBottom: "1rem" }}
             size="small"
             value={signUpData?.email}
-            onChange={(e) => handleInputChangeOfRegister(e)}
+            onChange={handleInputChange}
           />
           <TextField
             fullWidth
             variant="filled"
-            label="Enter Your Mobile Number"
-            name="phoneNo"
-            type="number"
+            label="Enter Password"
+            name="password"
+            type="password"
             color="success"
             sx={{ marginBottom: "1rem" }}
             size="small"
-            value={signUpData?.phoneNo}
-            onChange={(e) => handleInputChangeOfRegister(e)}
+            value={signUpData?.password}
+            onChange={handleInputChange}
           />
           <Button
             type="submit"
             variant="contained"
             sx={{ marginTop: "1rem", background: "#555555" }}
-            onClick={() => handleRegister()}
+            onClick={handleRegisterClick}
           >
             Register
           </Button>
           <Typography>
-            If you are already member <Link to={route.login}>login</Link>
+            If you are already a member, <Link to={route.login}>login</Link>
           </Typography>
         </div>
       </Grid>
