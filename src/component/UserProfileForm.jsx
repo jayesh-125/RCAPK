@@ -1,30 +1,29 @@
 import { TextField, Button } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { UpdateUserById } from "../services/auth";
+import { setAuthUser } from "../redux/authSlice";
 
 function UserProfileForm() {
   const [changes, setIsChanges] = useState(false);
   const authUser = useSelector((s) => s.auth.authUser);
-
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     username: authUser?.username,
     email: authUser?.email,
-    phoneNo: authUser?.phoneNo,
   });
 
   const handleInputChange = (e) => {
-    let { name, value } = e.target;
-    if (
-      activeUser?.username !== formData.username ||
-      activeUser.email !== formData.email ||
-      activeUser.phoneNo !== formData.phoneNo
-    ) {
-      setFormData({ ...formData, [name]: value });
+    const { name, value } = e.target;
+
+    if (formData[name] !== value) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
       setIsChanges(true);
     } else {
       setIsChanges(false);
-      return;
     }
   };
 
@@ -33,6 +32,8 @@ function UserProfileForm() {
     try {
       const res = await UpdateUserById(authUser?._id, formData);
       setFormData((prev) => ({ ...prev, ...res?.data }));
+      dispatch(setAuthUser(res?.data));
+      setIsChanges(false);
     } catch (error) {
       console.error("error", error.message);
     }
@@ -45,6 +46,7 @@ function UserProfileForm() {
         variant="outlined"
         label="Enter your name"
         name="username"
+        type="text"
         color="success"
         sx={{ marginBottom: "1rem" }}
         value={formData?.username}
@@ -55,6 +57,7 @@ function UserProfileForm() {
         variant="outlined"
         label="Enter Your email"
         name="email"
+        type="email"
         color="success"
         sx={{ marginBottom: "1rem" }}
         value={formData?.email}

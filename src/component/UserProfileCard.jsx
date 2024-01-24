@@ -13,6 +13,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveFriend } from "../redux/userSlice";
 import { DeleteFriend } from "../services/auth";
+import { useLocation, useNavigate } from "react-router-dom";
+import { route } from "../constant/routes";
 
 function UserProfileCard({ userData }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -20,6 +22,8 @@ function UserProfileCard({ userData }) {
   const authUser = useSelector((s) => s.auth.authUser);
   const activeFriend = useSelector((s) => s.user.activeFriend);
 
+  const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const openIcon = (e) => setAnchorEl(e?.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -41,13 +45,14 @@ function UserProfileCard({ userData }) {
   };
 
   const setFriend = (user) => {
-    if (user) {
-      dispatch(setActiveFriend(user));
-    } else if (userData) {
-      dispatch(setActiveFriend(userData[0]));
+    const targetUser = user || (userData && userData[0]);
+    if (targetUser) {
+      dispatch(setActiveFriend(targetUser));
+    }
+    if (location.pathname === route.dashboard) {
+      navigate(route.chat);
     }
   };
-
   useEffect(() => {
     setFriend();
   }, [authUser]);

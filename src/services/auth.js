@@ -54,7 +54,7 @@ export const SignOutUser = async () => {
 
 // _____________connect with express_______________ //
 
-export const ApiUrl = "http://localhost:9090";
+export const ApiUrl = "http://localhost:3000";
 
 export const SignUpUser = async (data) => {
   try {

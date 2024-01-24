@@ -34,13 +34,17 @@ function TempUserChat() {
   useEffect(() => {
     if (authUser?._id && activeFriend?._id) {
       fetchAllMessage();
+    }
+  }, [authUser?._id, activeFriend?._id]);
+
+  useEffect(() => {
+    messages &&
       setList(
         [...messages]?.sort(
           (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
         )
       );
-    }
-  }, [authUser, activeFriend]);
+  }, [messages, authUser?._id, activeFriend?._id]);
 
   return (
     <>

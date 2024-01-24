@@ -56,6 +56,7 @@ function DefaultLayout({ children, isUserProfile = false }) {
     if (fbAuth) setInitialData();
   }, [authUser, fbAuth]);
 
+  console.log(authUser)
   return (
     <Grid container spacing={0}>
       <Loader />

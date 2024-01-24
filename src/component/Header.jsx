@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Badge,
@@ -22,6 +22,7 @@ import { route } from "../constant/routes";
 import { GetDataFromLocal, RemoveDataFromLocal } from "../constant/common";
 import { SignOutUser } from "../services/auth";
 import { useSelector } from "react-redux";
+import NotificationBox from "./NotificationBox";
 
 //header function
 function Header() {
@@ -233,6 +234,7 @@ function Header() {
       <MobileMenu />
       <DefaultMenu />
       <Snackbar />
+      <NotificationBox />
     </AppBar>
   );
 }
