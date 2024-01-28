@@ -25,13 +25,10 @@ const TempLogin = () => {
       }
       const fbRes = await SignUserAuth(formData?.email, formData?.password);
       const res = await LoginUser({ ...formData });
-      if (res) {
-        dispatch(setAuthUser(res?.data));
-        localStorage.setItem("authUser", JSON.stringify(res?.data));
-        navigate(route.dashboard);
-      } else {
-        throw new Error("User not found.");
-      }
+      if (!res) throw new Error("User not found.");
+      dispatch(setAuthUser(res?.data));
+      localStorage.setItem("authUser", JSON.stringify(res?.data));
+      navigate(route.dashboard);
     } catch (error) {
       setError(error.message);
     }

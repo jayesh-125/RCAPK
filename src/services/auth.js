@@ -54,6 +54,7 @@ export const SignOutUser = async () => {
 
 // _____________connect with express_______________ //
 
+// export const ApiUrl = import.meta.env.VITE_APP_API_URL;
 export const ApiUrl = "http://localhost:3000";
 
 export const SignUpUser = async (data) => {
@@ -66,7 +67,8 @@ export const SignUpUser = async (data) => {
 
 export const LoginUser = async (data) => {
   try {
-    return (await axios.post(`${ApiUrl}/user/login`, data)).data;
+    const response = await axios.post(`${ApiUrl}/user/login`, data);
+    return response;
   } catch (error) {
     throw error;
   }
