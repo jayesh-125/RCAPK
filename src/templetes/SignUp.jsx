@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userModel } from "../constant/constant";
 import { route } from "../constant/routes";
-import { GenerateUniqueId } from "../constant/dataGenerator";
 import { CreateUserAuth, SignUpUser } from "../services/auth";
+import { GenerateUniqueId } from "../services/generator";
 
 const containerStyle = {
   justifyContent: "center",
@@ -69,7 +69,7 @@ const TempSignUp = () => {
             variant="filled"
             label="Enter User Name"
             name="username"
-            autoComplete="username"
+            autoComplete="off"
             type="text"
             color="success"
             sx={{ marginBottom: "1rem" }}
@@ -82,7 +82,7 @@ const TempSignUp = () => {
             variant="filled"
             label="Enter Your Email"
             name="email"
-            autoComplete="email"
+            autoComplete="off"
             type="email"
             color="success"
             sx={{ marginBottom: "1rem" }}
@@ -97,6 +97,7 @@ const TempSignUp = () => {
             name="password"
             type="password"
             color="success"
+            autoComplete="off"
             sx={{ marginBottom: "1rem" }}
             size="small"
             value={signUpData?.password}

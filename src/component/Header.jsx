@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Badge,
@@ -7,7 +7,6 @@ import {
   Menu,
   MenuItem,
   Popover,
-  Snackbar,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -16,45 +15,29 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import MailIcon from "@mui/icons-material/Mail";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useLocation, useNavigate } from "react-router-dom";
-import SearchInputFilled from "./SearchInputField";
 import ArrowBack from "@mui/icons-material/ArrowBackIos";
 import { route } from "../constant/routes";
-import { GetDataFromLocal, RemoveDataFromLocal } from "../constant/common";
+import { RemoveDataFromLocal } from "../constant/common";
 import { SignOutUser } from "../services/auth";
+import SearchInputFilled from "./SearchInputField";
+import CustomNotificationBox from "./CustomNotification";
 import { useSelector } from "react-redux";
-import NotificationBox from "./NotificationBox";
 
-//header function
-function Header() {
-  //constant
+const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileanchorEl, setMobileAnchorEl] = useState(null);
+  const authUser = useSelector((s) => s.auth.authUser);
+  const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [notiAnchorEl, setNotiAnchorEl] = useState(null);
-  const { username } = GetDataFromLocal("authUser");
   const mobileOpen = (e) => setMobileAnchorEl(e.currentTarget);
   const defaultOpen = (e) => setAnchorEl(e.currentTarget);
-  const notificationOpen = (e) => setNotiAnchorEl(e.currentTarget);
-
-  const defaultClose = () => {
-    mobileClose(), setAnchorEl(null);
-  };
-
-  const mobileClose = () => {
-    setMobileAnchorEl(null);
-  };
-
-  const notificationClose = () => {
-    setNotiAnchorEl(null);
-  };
+  const defaultClose = () => mobileClose();
+  const mobileClose = () => setMobileAnchorEl(null);
 
   const redirectBack = () => {
-    if (location.pathname === route.dashboard) {
-      navigate(route.login);
-    } else {
-      window.history.back();
-    }
+    location.pathname === route.dashboard
+      ? navigate(route.login)
+      : window.history.back();
   };
 
   const handleLogOut = async () => {
@@ -70,97 +53,7 @@ function Header() {
     }
   };
 
-  const openNoti = Boolean(notiAnchorEl);
-  const id = openNoti ? "simple-popover" : undefined;
-  //child component
-  const MobileMenu = () => {
-    return (
-      <Menu
-        anchorEl={mobileanchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        id={"menu-mobile-id"}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={Boolean(mobileanchorEl)}
-        onClose={mobileClose}
-      >
-        <MenuItem onClick={mobileClose}>
-          <IconButton
-            size="large"
-            aria-label="show 4 new mails"
-            color="inherit"
-          >
-            <Badge badgeContent={4} color="error">
-              <MailIcon />
-            </Badge>
-          </IconButton>
-          <p>Messages</p>
-        </MenuItem>
-        <MenuItem onClick={mobileClose}>
-          <IconButton
-            size="large"
-            aria-label="show 17 new notifications"
-            color="inherit"
-          >
-            <Badge badgeContent={17} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <p>Notifications</p>
-        </MenuItem>
-        <MenuItem onClick={defaultOpen}>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-id"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <p>Profile</p>
-        </MenuItem>
-      </Menu>
-    );
-  };
-
-  const DefaultMenu = () => {
-    return (
-      <Menu
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        id={"menu-id"}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={Boolean(anchorEl)}
-        onClose={defaultClose}
-      >
-        <MenuItem
-          onClick={() => {
-            defaultClose(), navigate(route?.profile);
-          }}
-        >
-          Profile
-        </MenuItem>
-        <MenuItem onClick={handleLogOut}>LogOut</MenuItem>
-      </Menu>
-    );
-  };
-
   return (
-    //elements
     <AppBar
       position="static"
       enableColorOnDark={true}
@@ -172,17 +65,13 @@ function Header() {
         marginLeft: { xs: "16px", sm: "0" },
       }}
     >
-      <Toolbar
-        sx={{
-          padding: "0",
-        }}
-      >
+      <Toolbar sx={{ padding: "0" }}>
         <IconButton color="inherit" onClick={redirectBack}>
           <ArrowBack />
         </IconButton>
         <SearchInputFilled />
         <Box sx={{ flexGrow: 1 }} />
-        <Typography>{username}</Typography>
+        <Typography>{authUser?.username}</Typography>
         <Box sx={{ display: { xs: "flex", sm: "none" } }}>
           <IconButton
             size="large"
@@ -200,43 +89,79 @@ function Header() {
             size="large"
             edge="end"
             onClick={defaultOpen}
-            aria-controls={"menu-id"}
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+        </Box>
+      </Toolbar>
+      <Menu
+        anchorEl={mobileAnchorEl}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        id={"menu-mobile-id"}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={Boolean(mobileAnchorEl)}
+        onClose={mobileClose}
+      >
+        <MenuItem onClick={mobileClose}>
+          <IconButton
+            size="large"
+            aria-label="show 4 new mails"
+            color="inherit"
+          >
+            <Badge badgeContent={4} color="error">
+              <MailIcon />
+            </Badge>
+          </IconButton>
+          <p>Messages</p>
+        </MenuItem>
+        <MenuItem onClick={defaultOpen}>
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-id"
             aria-haspopup="true"
             color="inherit"
           >
             <AccountCircle />
           </IconButton>
-          <IconButton
-            size="large"
-            aria-label="show 17 new notifications"
-            color="inherit"
-            aria-describedby={id}
-            onClick={notificationOpen}
-          >
-            <Badge badgeContent={17} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <Popover
-            id={id}
-            open={openNoti}
-            anchorEl={notiAnchorEl}
-            onClose={notificationClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-          >
-            <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
-          </Popover>
-        </Box>
-      </Toolbar>
-      <MobileMenu />
-      <DefaultMenu />
-      <Snackbar />
-      <NotificationBox />
+          <p>Profile</p>
+        </MenuItem>
+      </Menu>
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        id={"menu-id"}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={Boolean(anchorEl)}
+        onClose={defaultClose}
+      >
+        <MenuItem
+          onClick={() => {
+            defaultClose();
+            navigate(route?.profile);
+          }}
+        >
+          Profile
+        </MenuItem>
+        <MenuItem onClick={handleLogOut}>LogOut</MenuItem>
+      </Menu>
     </AppBar>
   );
-}
+};
 
 export default Header;

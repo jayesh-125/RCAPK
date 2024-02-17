@@ -1,5 +1,6 @@
-import { Avatar, Paper, Typography } from "@mui/material";
 import React from "react";
+import { Avatar, Paper, Typography } from "@mui/material";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
 function ChatBox({ data, auth, friend }) {
   const isUser = data?.fromUserId === auth?._id;
@@ -8,7 +9,7 @@ function ChatBox({ data, auth, friend }) {
   return (
     <div
       style={{
-        padding: "1rem",
+        padding: "2px 1rem",
         display: "flex",
         justifyContent: "flex-end",
         flexDirection: isUser ? "row" : "row-reverse",
@@ -16,33 +17,24 @@ function ChatBox({ data, auth, friend }) {
     >
       <Paper
         elevation={3}
-        style={{
-          padding: "1rem",
+        sx={{
+          padding: "4px 10px",
           maxWidth: "50%",
           background: isUser ? "#14452faf" : "#F0F0F0",
           color: isUser ? "#fff" : "#000",
           borderRadius: "10px",
           marginRight: isUser ? "10px" : "0",
           marginLeft: !isUser ? "10px" : "0",
+          height: "fit-content",
         }}
       >
         <Typography variant="body1">
-          {data?.lastMessage || "I am developer"}
+          {data?.lastMessage || "I am developer"}{" "}
+          <DoneAllIcon
+            sx={{ width: 14, height: 12, opacity: !data?.read ? 0.1 : 1 }}
+          />
         </Typography>
       </Paper>
-      <Avatar
-        style={{
-          marginLeft: isUser ? "0" : "10px",
-          marginRight: isUser ? "10px" : "0",
-          backgroundColor: isUser ? "#14452faf" : "#F0F0F0",
-          color: !isUser ? "#14452faf" : "#F0F0F0",
-          boxShadow: "0px 1px 4px #00000055",
-        }}
-      >
-        {isFriend
-          ? friend?.username.charAt(0).toUpperCase()
-          : auth?.username.charAt(0).toUpperCase()}
-      </Avatar>
     </div>
   );
 }

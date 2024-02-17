@@ -23,10 +23,6 @@ function Sidebar() {
   const friends = useSelector((s) => s.user.friendList);
   const dispatch = useDispatch();
 
-  const handleOpenAddFriend = (e) => {
-    setAnchorEl(e?.currentTarget);
-  };
-
   const handleClose = () => {
     setAnchorEl(null);
     setQuery("");
@@ -35,15 +31,10 @@ function Sidebar() {
 
   const addFriend = async (f) => {
     try {
-      let data = {};
-      data.friendId = authUser?._id;
-      data.username = f?.username;
-      data.lastMessage = f.lastMessage || "";
-      const res = await AddFriendUser(data);
+      const res = await AddFriendUser(authUser?._id, { friend_id: f?._id });
       dispatch(setFriendList(res?.data));
     } catch (error) {
       console.error("Error fetching user data:", error);
-      alert("An error occurred while fetching user data.");
     }
   };
 
@@ -77,7 +68,7 @@ function Sidebar() {
         <IconButton
           aria-label="display more actions"
           aria-describedby={anchorEl ? "open-popover" : undefined}
-          onClick={handleOpenAddFriend}
+          onClick={(e) => setAnchorEl(e?.currentTarget)}
           edge="end"
           sx={{ color: "#ffffff" }}
         >
@@ -97,7 +88,7 @@ function Sidebar() {
             background: "#ffffff",
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#888888",
+            backgroundColor: "#ffc107",
           },
           "&::-webkit-scrollbar-thumb:hover": {
             background: "#18392b",

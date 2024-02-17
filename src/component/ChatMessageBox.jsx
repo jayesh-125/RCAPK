@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Container,
@@ -7,46 +7,82 @@ import {
   TextField,
   InputAdornment,
   InputLabel,
+  Box,
 } from "@mui/material";
 import { EmojiEmotions, Send } from "@mui/icons-material";
-import { Picker } from "emoji-mart";
 import { startLoading, stopLoading } from "../redux/loaderSlice";
 import { setIsSend } from "../redux/callSlice";
-import { SendMessageToFriend } from "../services/auth";
+import { GetAllMessage, SendMessageToFriend } from "../services/auth";
+import EmojiPicker from "emoji-picker-react";
+// import { useSocket } from "../hook/Customhook";
 import { setMessageList } from "../redux/messageSlice";
 
 function ChatMessageBox() {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [selectedEmoji, setSelectedEmoji] = useState(null);
+  // const socket = useSocket();
   const dispatch = useDispatch();
-  const authUser = useSelector((s) => s.auth.authUser);
-  const activeFriend = useSelector((s) => s.user.activeFriend);
+  const { authUser } = useSelector((state) => state.auth);
+  const { activeFriend } = useSelector((state) => state.user);
 
-  const handleChangeInput = (e) => setMessage(e?.target?.value);
+  const emojiPickerRef = useRef(null);
 
-  const handleToggleEmojiPicker = () => {
-    setShowEmojiPicker((prev) => !prev);
+  const toggleEmojiPicker = () => setShowEmojiPicker((prev) => !prev);
+  const selectEmoji = (emoji) => {
+    setSelectedEmoji(emoji);
+    setMessage((prevMessage) => prevMessage + emoji?.emoji);
   };
 
-  const HandleSendMessage = async (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
     try {
+      const emojiString = selectedEmoji ? selectedEmoji?.emoji : "";
       const messageData = {
         fromUserId: authUser?._id,
-        lastMessage: message,
+        lastMessage: message + emojiString,
         toUserId: activeFriend?._id,
       };
+
       dispatch(startLoading());
-      const res = await SendMessageToFriend(messageData);
-      dispatch(setMessageList(res?.data));
+      // socket.emit("send_message", messageData);
+      await SendMessageToFriend(messageData);
+
+      const res = await GetAllMessage({
+        uid: authUser?._id,
+        fid: activeFriend?._id,
+      });
+
       dispatch(setIsSend(true));
+      dispatch(setMessageList(res?.data));
     } catch (error) {
       console.error(error?.message);
     } finally {
       dispatch(stopLoading());
       setMessage("");
+      setSelectedEmoji(null);
+      // Close the emoji picker when the message is sent
+      setShowEmojiPicker(false);
     }
   };
+
+  // Close emoji picker when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <Container
@@ -57,8 +93,19 @@ function ChatMessageBox() {
         position: "relative",
       }}
     >
-      {showEmojiPicker && <Picker />}
-      <form onSubmit={HandleSendMessage}>
+      <Box
+        ref={emojiPickerRef}
+        sx={{
+          display: showEmojiPicker ? "block" : "none",
+          position: "absolute",
+          bottom: "100%",
+          right: 0,
+        }}
+      >
+        <EmojiPicker onEmojiClick={selectEmoji} />
+      </Box>
+
+      <form onSubmit={sendMessage} style={{ width: "100%" }}>
         <Grid
           container
           spacing={0}
@@ -69,7 +116,7 @@ function ChatMessageBox() {
           }}
         >
           <Grid item xs={1}>
-            <IconButton aria-label="emoji" onClick={handleToggleEmojiPicker}>
+            <IconButton aria-label="emoji" onClick={toggleEmojiPicker}>
               <EmojiEmotions />
             </IconButton>
           </Grid>
@@ -87,7 +134,7 @@ function ChatMessageBox() {
               variant="outlined"
               color="success"
               fullWidth
-              onChange={handleChangeInput}
+              onChange={(e) => setMessage(e?.target?.value)}
               value={message}
               InputProps={{
                 endAdornment: (

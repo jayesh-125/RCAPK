@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import {
   Avatar,
@@ -9,7 +10,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveFriend } from "../redux/userSlice";
 import { DeleteFriend } from "../services/auth";
@@ -53,6 +53,7 @@ function UserProfileCard({ userData }) {
       navigate(route.chat);
     }
   };
+
   useEffect(() => {
     setFriend();
   }, [authUser]);
@@ -60,7 +61,7 @@ function UserProfileCard({ userData }) {
   return (
     <>
       {userData &&
-        userData.map((user, index) => (
+        userData?.map((user, index) => (
           <Card
             key={index}
             sx={{
@@ -82,11 +83,25 @@ function UserProfileCard({ userData }) {
             <CardHeader
               avatar={
                 <Avatar aria-label="user-avatar">
-                  {ProfileAvtarName(user?.username)}
+                  {user?.username?.charAt(0).toUpperCase()}
                 </Avatar>
               }
-              title={user?.username}
-              subheader={WordLimite(user?.lastMessage)}
+              title={
+                <Box display="flex" alignItems="center">
+                  <span>{user?.username}</span>
+                  {user.unreadCount > 0 && (
+                    <Badge
+                      badgeContent={user.unreadCount}
+                      color="error"
+                    />
+                  )}
+                </Box>
+              }
+              subheader={
+                user?.lastMessage
+                  ? user?.lastMessage?.slice(0, 22) + "..."
+                  : "..."
+              }
               action={
                 <Box>
                   <IconButton

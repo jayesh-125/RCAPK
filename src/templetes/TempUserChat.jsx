@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { GetAllMessage } from "../services/auth";
 import { setMessageList } from "../redux/messageSlice";
 import { startLoading, stopLoading } from "../redux/loaderSlice";
+// import { useSocket } from "../hook/Customhook";
 
 function TempUserChat() {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ function TempUserChat() {
   const authUser = useSelector((s) => s.auth.authUser);
   const activeFriend = useSelector((s) => s.user.activeFriend);
   const [list, setList] = useState();
+  // const [socketMessage, setSocketMessage] = useState([]);
+  // const socket = useSocket();
 
   const fetchAllMessage = async () => {
     try {
@@ -45,6 +48,14 @@ function TempUserChat() {
         )
       );
   }, [messages, authUser?._id, activeFriend?._id]);
+
+  // useEffect(() => {
+  //   socket.on("receive_message", (data) => {
+  //     console.log(data);
+  //     setSocketMessage((prev) => [...prev, data]);
+  //   });
+  //   console.log("socketToget:", socketMessage);
+  // }, [socket]);
 
   return (
     <>

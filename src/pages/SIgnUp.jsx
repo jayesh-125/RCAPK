@@ -1,12 +1,12 @@
 import React from "react";
 import TempSignUp from "../templetes/SignUp";
-import Gaurd from "../gaurd";
+import AuthCheck from "../guard/AuthCheck";
 
 function SignUp() {
   return (
-    <Gaurd>
+    <AuthCheck>
       <TempSignUp />
-    </Gaurd>
+    </AuthCheck>
   );
 }
 

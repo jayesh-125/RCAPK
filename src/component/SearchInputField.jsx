@@ -1,9 +1,8 @@
+import React from "react";
 import { InputBase, alpha, styled } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import React from "react";
 
 function SearchInputFilled() {
-
   const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,

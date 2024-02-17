@@ -12,22 +12,17 @@ const TempLogin = () => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       if (!formData?.email?.trim() || !formData?.password?.trim()) {
         throw new Error("Email and password are required");
       }
-      const fbRes = await SignUserAuth(formData?.email, formData?.password);
+
+      // const fbRes = await SignUserAuth(formData?.email, formData?.password);
       const res = await LoginUser({ ...formData });
-      if (!res) throw new Error("User not found.");
+
       dispatch(setAuthUser(res?.data));
-      localStorage.setItem("authUser", JSON.stringify(res?.data));
       navigate(route.dashboard);
     } catch (error) {
       setError(error.message);
@@ -71,9 +66,12 @@ const TempLogin = () => {
             type="email"
             color="success"
             sx={{ marginBottom: "1rem" }}
+            autoComplete="off"
             size="small"
             value={formData.email}
-            onChange={handleInputChange}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, email: e.target.value }))
+            }
           />
           <TextField
             fullWidth
@@ -83,9 +81,12 @@ const TempLogin = () => {
             type="password"
             color="success"
             sx={{ marginBottom: "1rem" }}
+            autoComplete="off"
             size="small"
             value={formData.password}
-            onChange={handleInputChange}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, password: e.target.value }))
+            }
           />
           <Button
             type="submit"
