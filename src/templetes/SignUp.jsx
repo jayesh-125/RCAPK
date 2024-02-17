@@ -11,7 +11,21 @@ const containerStyle = {
   justifyContent: "center",
   alignContent: "center",
   height: "100vh",
-  background: "#55555522",
+  background: "#017887",
+  overflowY: "auto",
+  scrollbarWidth: "4px",
+  "&::-webkit-scrollbar": {
+    width: "4px",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "#ffffff00",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#017887",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    background: "#18392b",
+  },
 };
 
 const formContainerStyle = {
@@ -21,6 +35,7 @@ const formContainerStyle = {
   justifyContent: "center",
   background: "#ffffff",
   padding: "30px",
+  borderRadius: "20px",
 };
 
 const TempSignUp = () => {
@@ -55,11 +70,11 @@ const TempSignUp = () => {
 
   return (
     <Grid container sx={containerStyle}>
-      <Grid item sm={4}>
+      <Grid item sm={4} sx={{ p: "50px 0", height: "100%" }}>
         <div style={formContainerStyle}>
           <Typography
-            color="green"
-            fontSize={24}
+            color="#017887"
+            fontSize={34}
             fontWeight={600}
             marginBottom={5}
           >
@@ -67,12 +82,12 @@ const TempSignUp = () => {
           </Typography>
           <TextField
             fullWidth
-            variant="filled"
+            variant="standard"
             label="Enter User Name"
             name="username"
             autoComplete="off"
             type="text"
-            color="success"
+            color="primary"
             sx={{ marginBottom: "1rem" }}
             size="small"
             value={signUpData?.username}
@@ -80,12 +95,12 @@ const TempSignUp = () => {
           />
           <TextField
             fullWidth
-            variant="filled"
+            variant="standard"
             label="Enter Your Email"
             name="email"
             autoComplete="off"
             type="email"
-            color="success"
+            color="primary"
             sx={{ marginBottom: "1rem" }}
             size="small"
             value={signUpData?.email}
@@ -93,11 +108,11 @@ const TempSignUp = () => {
           />
           <TextField
             fullWidth
-            variant="filled"
+            variant="standard"
             label="Enter Password"
             name="password"
             type="password"
-            color="success"
+            color="primary"
             autoComplete="off"
             sx={{ marginBottom: "1rem" }}
             size="small"
@@ -107,13 +122,26 @@ const TempSignUp = () => {
           <Button
             type="submit"
             variant="contained"
-            sx={{ marginTop: "1rem", background: "#555555" }}
+            sx={{
+              marginTop: "1rem",
+              bgcolor: "#0a3a40",
+              "&:hover": {
+                bgcolor: "#0c4c56",
+              },
+            }}
             onClick={handleRegisterClick}
           >
             Register
           </Button>
+
           <Typography>
-            If you are already a member, <Link to={route.login}>login</Link>
+            If you are already a member,{" "}
+            <Link
+              style={{ color: "#ff0000", textDecoration: "none" }}
+              to={route.login}
+            >
+              login
+            </Link>
           </Typography>
         </div>
       </Grid>

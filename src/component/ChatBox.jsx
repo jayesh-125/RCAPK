@@ -1,10 +1,8 @@
 import React from "react";
-import { Avatar, Paper, Typography } from "@mui/material";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
+import { Paper, Typography } from "@mui/material";
 
 function ChatBox({ data, auth, friend }) {
   const isUser = data?.fromUserId === auth?._id;
-  const isFriend = data?.fromUserId === friend?._id;
 
   return (
     <div
@@ -16,11 +14,11 @@ function ChatBox({ data, auth, friend }) {
       }}
     >
       <Paper
-        elevation={3}
+        elevation={1}
         sx={{
           padding: "4px 10px",
           maxWidth: "50%",
-          background: isUser ? "#14452faf" : "#F0F0F0",
+          background: isUser ? "#017887" : "#e0ddea",
           color: isUser ? "#fff" : "#000",
           borderRadius: "10px",
           marginRight: isUser ? "10px" : "0",
@@ -28,12 +26,7 @@ function ChatBox({ data, auth, friend }) {
           height: "fit-content",
         }}
       >
-        <Typography variant="body1">
-          {data?.lastMessage || "I am developer"}{" "}
-          <DoneAllIcon
-            sx={{ width: 14, height: 12, opacity: !data?.read ? 0.1 : 1 }}
-          />
-        </Typography>
+        <Typography variant="body1">{data?.lastMessage || ""} </Typography>
       </Paper>
     </div>
   );

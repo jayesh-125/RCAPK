@@ -1,23 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  Popover,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { Add } from "@mui/icons-material";
+import React, { useState } from "react";
+import { Box, Button, IconButton, InputBase, Popover } from "@mui/material";
+import { SearchSharp } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import UserProfileCard from "./UserProfileCard";
-import { AddFriendUser, GetAllUesrs } from "../services/api";
+import { AddFriendUser, GetAllUsers } from "../services/api";
 import { setFriendList } from "../redux/userSlice";
 
 function Sidebar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [users, setUsers] = useState([]);
-  const [add, setAdd] = useState(null);
   const [query, setQuery] = useState("");
   const authUser = useSelector((s) => s.auth.authUser);
   const friends = useSelector((s) => s.user.friendList);
@@ -29,9 +20,11 @@ function Sidebar() {
     setUsers([]);
   };
 
-  const addFriend = async (f) => {
+  const addFriend = async (friend) => {
     try {
-      const res = await AddFriendUser(authUser?._id, { friend_id: f?._id });
+      const res = await AddFriendUser(authUser?._id, {
+        friend_id: friend?._id,
+      });
       dispatch(setFriendList(res?.data));
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -40,7 +33,7 @@ function Sidebar() {
 
   const getAllUsers = async () => {
     try {
-      const res = await GetAllUesrs(query);
+      const res = await GetAllUsers(query);
       setUsers(res.data);
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -48,54 +41,64 @@ function Sidebar() {
     }
   };
 
-  useEffect(() => {
-    query && getAllUsers();
-  }, [query]);
+  const handleSearch = () => {
+    getAllUsers();
+    setAnchorEl(document.getElementById("search-button"));
+  };
 
   return (
     <>
-      <Toolbar sx={{ backgroundColor: "#8a8a8a", height: 64 }}>
-        <Typography
-          sx={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: 600,
-          }}
-        >
-          Add Friends
-        </Typography>
-        <Box flexGrow={1} />
-        <IconButton
-          aria-label="display more actions"
-          aria-describedby={anchorEl ? "open-popover" : undefined}
-          onClick={(e) => setAnchorEl(e?.currentTarget)}
-          edge="end"
-          sx={{ color: "#ffffff" }}
-        >
-          <Add />
-        </IconButton>
-      </Toolbar>
       <Box
         sx={{
-          height: "calc(100vh - 70px)",
+          backgroundColor: "#ffffff",
+          position: "relative",
+          borderBottom: "2px solid #017887",
+        }}
+      >
+        <InputBase
+          variant="standard"
+          placeholder="Search friend"
+          color="success"
+          name="search"
+          type="text"
+          id="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          sx={{ marginTop: "20px", padding: "0 20px", width: "94%" }}
+        />
+        <IconButton
+          id="search-button" // Add id for targeting the button
+          onClick={handleSearch}
+          aria-label="search"
+          sx={{ position: "absolute", top: "1rem", right: 0 }} // Position the button absolutely
+        >
+          <SearchSharp />
+        </IconButton>
+      </Box>
+      <Box
+        sx={{
+          height: "100%",
           overflowY: "auto",
           padding: "0px 5px",
-          scrollbarWidth: "thin",
+          scrollbarWidth: "4px",
           "&::-webkit-scrollbar": {
             width: "4px",
           },
           "&::-webkit-scrollbar-track": {
-            background: "#ffffff",
+            background: "#ffffff00",
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#ffc107",
+            backgroundColor: "#017887",
           },
           "&::-webkit-scrollbar-thumb:hover": {
             background: "#18392b",
           },
         }}
       >
-        <UserProfileCard userData={friends} />
+        {friends &&
+          friends.map((user, index) => (
+            <UserProfileCard user={user} key={index} topUser={friends[0]} />
+          ))}
       </Box>
       <Popover
         open={Boolean(anchorEl)}
@@ -110,35 +113,22 @@ function Sidebar() {
           horizontal: "right",
         }}
       >
-        <TextField
-          sx={{ margin: "20px" }}
-          variant="standard"
-          placeholder="Add friend"
-          color="success"
-          name="search"
-          type="text"
-          id="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        {users
-          ? users.map((data) => (
-              <Box
-                sx={{
-                  marginTop: "10px",
-                  padding: "10px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-                key={data?._id}
-              >
-                <span>{data?.username}</span>
-                <Button color="success" onClick={() => addFriend(data)}>
-                  Add
-                </Button>
-              </Box>
-            ))
-          : null}
+        {users.map((data) => (
+          <Box
+            sx={{
+              marginTop: "10px",
+              padding: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+            key={data?._id}
+          >
+            <span>{data?.username}</span>
+            <Button color="success" onClick={() => addFriend(data)}>
+              Add
+            </Button>
+          </Box>
+        ))}
       </Popover>
     </>
   );

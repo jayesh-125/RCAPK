@@ -7,6 +7,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "../redux/authSlice";
 import { LoginUser } from "../services/api";
 
+const containerStyle = {
+  justifyContent: "center",
+  alignContent: "center",
+  height: "100vh",
+  background: "#017887",
+  overflowY: "auto",
+  scrollbarWidth: "4px",
+  "&::-webkit-scrollbar": {
+    width: "4px",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "#ffffff00",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#017887",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    background: "#18392b",
+  },
+};
+
+const formContainerStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "#ffffff",
+  padding: "30px",
+  borderRadius: "20px",
+};
+
 const TempLogin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -20,40 +51,22 @@ const TempLogin = () => {
         throw new Error("Email and password are required");
       }
 
-      // const fbRes = await SignUserAuth(formData?.email, formData?.password);
       const res = await LoginUser({ ...formData });
 
       dispatch(setAuthUser(res?.data));
       navigate(route.dashboard);
     } catch (error) {
-      setError(error.message);
+      alert(error.message);
     }
   };
 
   return (
-    <Grid
-      container
-      sx={{
-        justifyContent: "center",
-        alignContent: "center",
-        height: "100vh",
-        background: "#55555522",
-      }}
-    >
+    <Grid container sx={containerStyle}>
       <Grid item sm={4}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#ffffff",
-            padding: "30px",
-          }}
-        >
+        <div style={formContainerStyle}>
           <Typography
-            color="green"
-            fontSize={24}
+            color="#017887"
+            fontSize={34}
             fontWeight={600}
             marginBottom={5}
           >
@@ -61,11 +74,11 @@ const TempLogin = () => {
           </Typography>
           <TextField
             fullWidth
-            variant="filled"
+            variant="standard"
             label="Enter Your Email"
             name="email"
             type="email"
-            color="success"
+            color="primary"
             sx={{ marginBottom: "1rem" }}
             autoComplete="off"
             size="small"
@@ -76,11 +89,11 @@ const TempLogin = () => {
           />
           <TextField
             fullWidth
-            variant="filled"
+            variant="standard"
             label="Enter Your Password"
             name="password"
             type="password"
-            color="success"
+            color="primary"
             sx={{ marginBottom: "1rem" }}
             autoComplete="off"
             size="small"
@@ -92,19 +105,26 @@ const TempLogin = () => {
           <Button
             type="submit"
             variant="contained"
-            sx={{ marginTop: "1rem", background: "#555555" }}
+            sx={{
+              marginTop: "1rem",
+              bgcolor: "#0a3a40",
+              "&:hover": {
+                bgcolor: "#0c4c56", // Change to the desired hover color
+              },
+            }}
             onClick={handleLogin}
           >
             Login
           </Button>
-          {error && (
-            <Typography color="error" sx={{ marginTop: "1rem" }}>
-              {error}
-            </Typography>
-          )}
+
           <Typography>
             If you are a new user? Please{" "}
-            <Link to={route.sign_up}>Sign-up</Link>
+            <Link
+              to={route.sign_up}
+              style={{ color: "#ff0000", textDecoration: "none" }}
+            >
+              Sign-up
+            </Link>
           </Typography>
         </div>
       </Grid>

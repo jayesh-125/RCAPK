@@ -1,38 +1,32 @@
 import React, { useState } from "react";
 import {
   AppBar,
-  Badge,
   Box,
+  Grid,
   IconButton,
   Menu,
   MenuItem,
-  Popover,
   Toolbar,
   Typography,
 } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import MailIcon from "@mui/icons-material/Mail";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBack from "@mui/icons-material/ArrowBackIos";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import MoreIcon from "@mui/icons-material/MoreVert";
+import { useLocation, useNavigate } from "react-router-dom";
 import { route } from "../constant/routes";
 import { RemoveDataFromLocal } from "../constant/common";
 import { SignOutUser } from "../services/auth";
-import SearchInputFilled from "./SearchInputField";
-import CustomNotificationBox from "./CustomNotification";
 import { useSelector } from "react-redux";
+import { useWindowWidth } from "../hook/Customhook";
+import { Home } from "@mui/icons-material";
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const authUser = useSelector((s) => s.auth.authUser);
-  const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const mobileOpen = (e) => setMobileAnchorEl(e.currentTarget);
+  const windoWidth = useWindowWidth();
   const defaultOpen = (e) => setAnchorEl(e.currentTarget);
-  const defaultClose = () => mobileClose();
-  const mobileClose = () => setMobileAnchorEl(null);
 
   const redirectBack = () => {
     location.pathname === route.dashboard
@@ -44,7 +38,7 @@ const Header = () => {
     try {
       const res = await SignOutUser();
       if (res) {
-        defaultClose();
+        setAnchorEl(null);
         navigate(route?.login);
         RemoveDataFromLocal("user");
       }
@@ -58,83 +52,51 @@ const Header = () => {
       position="static"
       enableColorOnDark={true}
       sx={{
-        background: "#555555",
+        background: "#017887",
         boxShadow: "none",
-        borderRadius: { xs: "8px 8px 0 0", sm: "0" },
-        width: "auto",
-        marginLeft: { xs: "16px", sm: "0" },
+        width: "100%",
+        paddingLeft: "1rem",
+        paddingRight: "1rem",
       }}
     >
-      <Toolbar sx={{ padding: "0" }}>
+      <Toolbar sx={{ padding: "0", display: "flex" }}>
+        {windoWidth < 570 && (
+          <IconButton
+            color={location.pathname === route.dashboard ? "info" : "inherit"}
+            onClick={() => navigate(route.dashboard)}
+          >
+            <Home />
+          </IconButton>
+        )}
         <IconButton color="inherit" onClick={redirectBack}>
           <ArrowBack />
         </IconButton>
-        <SearchInputFilled />
-        <Box sx={{ flexGrow: 1 }} />
-        <Typography>{authUser?.username}</Typography>
-        <Box sx={{ display: { xs: "flex", sm: "none" } }}>
-          <IconButton
-            size="large"
-            aria-label="show more"
-            aria-controls={"menu-mobile-id"}
-            aria-haspopup="true"
-            onClick={mobileOpen}
-            color="inherit"
-          >
-            <MoreIcon />
-          </IconButton>
-        </Box>
-        <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+        <Typography
+          variant="h5"
+          sx={{ fontWeight: "bold", color: "#fff", marginLeft: "16px" }}
+        >
+          Chat-room
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            marginLeft: "auto",
+          }}
+        >
+          <Typography>{authUser?.username}</Typography>
           <IconButton
             size="large"
             edge="end"
             onClick={defaultOpen}
             color="inherit"
+            sx={{ padding: 0, width: 50 }}
           >
             <AccountCircle />
           </IconButton>
         </Box>
       </Toolbar>
-      <Menu
-        anchorEl={mobileAnchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        id={"menu-mobile-id"}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={Boolean(mobileAnchorEl)}
-        onClose={mobileClose}
-      >
-        <MenuItem onClick={mobileClose}>
-          <IconButton
-            size="large"
-            aria-label="show 4 new mails"
-            color="inherit"
-          >
-            <Badge badgeContent={4} color="error">
-              <MailIcon />
-            </Badge>
-          </IconButton>
-          <p>Messages</p>
-        </MenuItem>
-        <MenuItem onClick={defaultOpen}>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-id"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <p>Profile</p>
-        </MenuItem>
-      </Menu>
       <Menu
         anchorEl={anchorEl}
         anchorOrigin={{
@@ -148,11 +110,11 @@ const Header = () => {
           horizontal: "right",
         }}
         open={Boolean(anchorEl)}
-        onClose={defaultClose}
+        onClose={() => setAnchorEl(null)}
       >
         <MenuItem
           onClick={() => {
-            defaultClose();
+            setAnchorEl(null);
             navigate(route?.profile);
           }}
         >

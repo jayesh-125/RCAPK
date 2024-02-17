@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const ApiUrl = import.meta.env.VITE_APP_API_URL;
-// export const ApiUrl = "http://localhost:3000";
+// export const ApiUrl = import.meta.env.VITE_APP_API_URL;
+export const ApiUrl = "http://localhost:3000";
 
 export const SignUpUser = async (data) => {
   try {
@@ -22,14 +22,6 @@ export const LoginUser = async (data) => {
 };
 
 //auth user
-export const GetUserByEmail = async (email) => {
-  try {
-    const result = await axios.get(`${ApiUrl}/user/email=${email}`);
-    return result.data;
-  } catch (error) {
-    throw error;
-  }
-};
 
 export const GetUserById = async (id) => {
   try {
@@ -49,7 +41,7 @@ export const UpdateUserById = async (id, data) => {
   }
 };
 
-export const GetAllUesrs = async (query) => {
+export const GetAllUsers = async (query) => {
   try {
     const result = await axios.get(`${ApiUrl}/user/all`, {
       params: { search: query },

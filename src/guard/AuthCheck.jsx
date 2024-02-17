@@ -6,7 +6,7 @@ import { route } from "../constant/routes";
 function AuthCheck({ children }) {
   const authUser = GetDataFromLocal("authUser");
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (authUser) {
       navigate(route.dashboard);

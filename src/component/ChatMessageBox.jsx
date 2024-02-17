@@ -12,56 +12,50 @@ import {
 import { EmojiEmotions, Send } from "@mui/icons-material";
 import { startLoading, stopLoading } from "../redux/loaderSlice";
 import { setIsSend } from "../redux/callSlice";
-import { GetAllMessage, SendMessageToFriend } from "../services/api";
+import { SendMessageToFriend } from "../services/api";
 import EmojiPicker from "emoji-picker-react";
-// import { useSocket } from "../hook/Customhook";
+import { useSocket } from "../hook/Customhook";
 import { setMessageList } from "../redux/messageSlice";
 
 function ChatMessageBox() {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [selectedEmoji, setSelectedEmoji] = useState(null);
-  // const socket = useSocket();
+  const socket = useSocket();
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.auth);
   const { activeFriend } = useSelector((state) => state.user);
+  const messages = useSelector((s) => s.message.list);
 
   const emojiPickerRef = useRef(null);
 
   const toggleEmojiPicker = () => setShowEmojiPicker((prev) => !prev);
   const selectEmoji = (emoji) => {
-    setSelectedEmoji(emoji);
-    setMessage((prevMessage) => prevMessage + emoji?.emoji);
+    // Append emoji only if it's not already present in the message
+    setMessage((prevMessage) =>
+      prevMessage.endsWith(emoji?.emoji)
+        ? prevMessage
+        : prevMessage + emoji?.emoji
+    );
   };
 
   const sendMessage = async (e) => {
     e.preventDefault();
     try {
-      const emojiString = selectedEmoji ? selectedEmoji?.emoji : "";
       const messageData = {
         fromUserId: authUser?._id,
-        lastMessage: message + emojiString,
+        lastMessage: message,
         toUserId: activeFriend?._id,
       };
-
       dispatch(startLoading());
-      // socket.emit("send_message", messageData);
+      socket.emit("send_message", messageData);
       await SendMessageToFriend(messageData);
-
-      const res = await GetAllMessage({
-        uid: authUser?._id,
-        fid: activeFriend?._id,
-      });
-
       dispatch(setIsSend(true));
-      dispatch(setMessageList(res?.data));
+      dispatch(setMessageList([...messages, messageData]));
     } catch (error) {
       console.error(error?.message);
     } finally {
       dispatch(stopLoading());
       setMessage("");
-      setSelectedEmoji(null);
-      // Close the emoji picker when the message is sent
       setShowEmojiPicker(false);
     }
   };
@@ -89,7 +83,7 @@ function ChatMessageBox() {
       sx={{
         display: "flex",
         alignItems: "center",
-        background: "#0a5c3611",
+        background: "#b6d4d0",
         position: "relative",
       }}
     >
@@ -116,7 +110,11 @@ function ChatMessageBox() {
           }}
         >
           <Grid item xs={1}>
-            <IconButton aria-label="emoji" onClick={toggleEmojiPicker}>
+            <IconButton
+              aria-label="emoji"
+              sx={{ color: "#017887" }}
+              onClick={toggleEmojiPicker}
+            >
               <EmojiEmotions />
             </IconButton>
           </Grid>
@@ -126,7 +124,7 @@ function ChatMessageBox() {
               label={
                 <InputLabel
                   htmlFor="outlined-basic"
-                  sx={{ color: "success.main" }}
+                  sx={{ color: "success.main", padding: 0 }}
                 >
                   Enter your message
                 </InputLabel>
@@ -134,6 +132,7 @@ function ChatMessageBox() {
               variant="outlined"
               color="success"
               fullWidth
+              size="small"
               onChange={(e) => setMessage(e?.target?.value)}
               value={message}
               InputProps={{
