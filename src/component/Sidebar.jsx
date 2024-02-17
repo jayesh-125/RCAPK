@@ -11,7 +11,7 @@ import {
 import { Add } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import UserProfileCard from "./UserProfileCard";
-import { AddFriendUser, GetAllUesrs } from "../services/auth";
+import { AddFriendUser, GetAllUesrs } from "../services/api";
 import { setFriendList } from "../redux/userSlice";
 
 function Sidebar() {

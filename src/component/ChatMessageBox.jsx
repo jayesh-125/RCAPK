@@ -12,7 +12,7 @@ import {
 import { EmojiEmotions, Send } from "@mui/icons-material";
 import { startLoading, stopLoading } from "../redux/loaderSlice";
 import { setIsSend } from "../redux/callSlice";
-import { GetAllMessage, SendMessageToFriend } from "../services/auth";
+import { GetAllMessage, SendMessageToFriend } from "../services/api";
 import EmojiPicker from "emoji-picker-react";
 // import { useSocket } from "../hook/Customhook";
 import { setMessageList } from "../redux/messageSlice";

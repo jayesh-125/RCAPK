@@ -12,7 +12,7 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveFriend } from "../redux/userSlice";
-import { DeleteFriend } from "../services/auth";
+import { DeleteFriend } from "../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { route } from "../constant/routes";
 

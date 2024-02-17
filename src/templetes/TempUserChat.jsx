@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 import ChatMessageBox from "../component/ChatMessageBox";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { GetAllMessage } from "../services/auth";
+import { GetAllMessage } from "../services/api";
 import { setMessageList } from "../redux/messageSlice";
 import { startLoading, stopLoading } from "../redux/loaderSlice";
 // import { useSocket } from "../hook/Customhook";

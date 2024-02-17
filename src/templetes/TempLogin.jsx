@@ -2,9 +2,10 @@ import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { route } from "../constant/routes";
 import { useState } from "react";
-import { LoginUser, SignUserAuth } from "../services/auth";
+import { SignUserAuth } from "../services/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "../redux/authSlice";
+import { LoginUser } from "../services/api";
 
 const TempLogin = () => {
   const navigate = useNavigate();

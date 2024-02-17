@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userModel } from "../constant/constant";
 import { route } from "../constant/routes";
-import { CreateUserAuth, SignUpUser } from "../services/auth";
+import { SignUpUser } from "../services/api";
 import { GenerateUniqueId } from "../services/generator";
+import { CreateUserAuth } from "../services/auth";
 
 const containerStyle = {
   justifyContent: "center",

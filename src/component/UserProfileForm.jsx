@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { UpdateUserById } from "../services/auth";
+import { UpdateUserById } from "../services/api";
 import { setAuthUser } from "../redux/authSlice";
 
 function UserProfileForm() {

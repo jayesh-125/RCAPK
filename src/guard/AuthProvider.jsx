@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { GetDataFromLocal } from "../constant/common";
 import { startLoading, stopLoading } from "../redux/loaderSlice";
 import { onAuthStateChanged } from "firebase/auth";
-import { GetAllFriend, GetUserById } from "../services/auth";
+import { GetAllFriend, GetUserById } from "../services/api";
 import { setAuthUser } from "../redux/authSlice";
 import { setFriendList } from "../redux/userSlice";
 import { route } from "../constant/routes";
