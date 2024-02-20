@@ -1,5 +1,4 @@
 import axios from "axios";
-
 // export const ApiUrl = import.meta.env.VITE_APP_API_URL;
 export const ApiUrl = "http://localhost:3000";
 
