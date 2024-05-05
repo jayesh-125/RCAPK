@@ -69,83 +69,85 @@ const TempSignUp = () => {
   };
 
   return (
-    <Grid container sx={containerStyle}>
-      <Grid item sm={4} sx={{ p: "50px 0", height: "100%" }}>
-        <div style={formContainerStyle}>
-          <Typography
-            color="#017887"
-            fontSize={34}
-            fontWeight={600}
-            marginBottom={5}
-          >
-            Register
-          </Typography>
-          <TextField
-            fullWidth
-            variant="standard"
-            label="Enter User Name"
-            name="username"
-            autoComplete="off"
-            type="text"
-            color="primary"
-            sx={{ marginBottom: "1rem" }}
-            size="small"
-            value={signUpData?.username}
-            onChange={handleInputChange}
-          />
-          <TextField
-            fullWidth
-            variant="standard"
-            label="Enter Your Email"
-            name="email"
-            autoComplete="off"
-            type="email"
-            color="primary"
-            sx={{ marginBottom: "1rem" }}
-            size="small"
-            value={signUpData?.email}
-            onChange={handleInputChange}
-          />
-          <TextField
-            fullWidth
-            variant="standard"
-            label="Enter Password"
-            name="password"
-            type="password"
-            color="primary"
-            autoComplete="off"
-            sx={{ marginBottom: "1rem" }}
-            size="small"
-            value={signUpData?.password}
-            onChange={handleInputChange}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{
-              marginTop: "1rem",
-              bgcolor: "#0a3a40",
-              "&:hover": {
-                bgcolor: "#0c4c56",
-              },
-            }}
-            onClick={handleRegisterClick}
-          >
-            Register
-          </Button>
-
-          <Typography>
-            If you are already a member,{" "}
-            <Link
-              style={{ color: "#ff0000", textDecoration: "none" }}
-              to={route.login}
+    <div>
+      <Grid container sx={containerStyle}>
+        <Grid item sm={4} sx={{ p: "50px 0"}}>
+          <div style={formContainerStyle}>
+            <Typography
+              color="#017887"
+              fontSize={34}
+              fontWeight={600}
+              marginBottom={5}
             >
-              login
-            </Link>
-          </Typography>
-        </div>
+              Register
+            </Typography>
+            <TextField
+              fullWidth
+              variant="standard"
+              label="Enter User Name"
+              name="username"
+              autoComplete="off"
+              type="text"
+              color="primary"
+              sx={{ marginBottom: "1rem" }}
+              size="small"
+              value={signUpData?.username}
+              onChange={handleInputChange}
+            />
+            <TextField
+              fullWidth
+              variant="standard"
+              label="Enter Your Email"
+              name="email"
+              autoComplete="off"
+              type="email"
+              color="primary"
+              sx={{ marginBottom: "1rem" }}
+              size="small"
+              value={signUpData?.email}
+              onChange={handleInputChange}
+            />
+            <TextField
+              fullWidth
+              variant="standard"
+              label="Enter Password"
+              name="password"
+              type="password"
+              color="primary"
+              autoComplete="off"
+              sx={{ marginBottom: "1rem" }}
+              size="small"
+              value={signUpData?.password}
+              onChange={handleInputChange}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                marginTop: "1rem",
+                bgcolor: "#0a3a40",
+                "&:hover": {
+                  bgcolor: "#0c4c56",
+                },
+              }}
+              onClick={handleRegisterClick}
+            >
+              Register
+            </Button>
+
+            <Typography>
+              If you are already a member,{" "}
+              <Link
+                style={{ color: "#ff0000", textDecoration: "none" }}
+                to={route.login}
+              >
+                login
+              </Link>
+            </Typography>
+          </div>
+        </Grid>
       </Grid>
-    </Grid>
+    </div>
   );
 };
 

@@ -3,8 +3,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth } from "../firebase";
-import axios from "axios";
+import { auth } from "../configs/firebase";
 
 export const CreateUserAuth = async (email, password) => {
   try {
@@ -43,10 +42,7 @@ export const SignUserAuth = async (email, password) => {
 
 export const SignOutUser = async () => {
   try {
-    const res = await signOut(auth);
-    if (!res) {
-      throw new Error("response not found.");
-    }
+    await signOut(auth);
   } catch (error) {
     throw error;
   }

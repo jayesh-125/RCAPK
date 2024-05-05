@@ -11,7 +11,7 @@ function DefaultLayout({ children, isUserProfile = false }) {
   const windoWidth = useWindowWidth();
 
   return (
-    <Box sx={{ background: "#e8fcff" }}>
+    <Box sx={{ background: "#e8fcff", height: "100vh" }}>
       <AuthProvider>
         <Header />
         <Grid container spacing={0}>
@@ -23,7 +23,7 @@ function DefaultLayout({ children, isUserProfile = false }) {
               sx={{
                 width: "100%",
                 display: isUserProfile ? "none" : "block",
-                height: "100%",
+                height: "calc(100vh - 125px)",
               }}
             >
               <Sidebar />

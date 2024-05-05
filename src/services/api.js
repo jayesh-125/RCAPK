@@ -1,6 +1,9 @@
 import axios from "axios";
-// export const ApiUrl = import.meta.env.VITE_APP_API_URL;
-export const ApiUrl = "http://localhost:3000";
+import { fb_database } from "../configs/firebase"
+import { addDoc, collection, getDocs } from "firebase/firestore";
+import { apiUrl } from "../configs/url";
+
+export const ApiUrl = apiUrl("PRODUCTION");
 
 export const SignUpUser = async (data) => {
   try {
@@ -33,7 +36,12 @@ export const GetUserById = async (id) => {
 
 export const UpdateUserById = async (id, data) => {
   try {
-    const result = await axios.put(`${ApiUrl}/user/${id}`, data);
+    const result = await axios.put(`${ApiUrl}/user/${id}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    // const result = await axios.put(`${ApiUrl}/user/${id}`, data);
     return result.data;
   } catch (error) {
     throw error;
@@ -71,9 +79,11 @@ export const GetAllFriend = async (id) => {
   }
 };
 
-export const DeleteFriend = async (id) => {
+export const DeleteFriend = async (id, friend_id) => {
   try {
-    const result = await axios.delete(`${ApiUrl}/user/delete/${id}`);
+    const result = await axios.post(`${ApiUrl}/user/delete/${id}`, {
+      friend_id,
+    });
     return result.data;
   } catch (error) {
     throw error;
@@ -84,8 +94,7 @@ export const DeleteFriend = async (id) => {
 
 export const SendMessageToFriend = async (data) => {
   try {
-    const result = await axios.post(`${ApiUrl}/message`, { data });
-    return result.data;
+    await addDoc(collection(fb_database, "chats"), data)
   } catch (error) {
     throw error;
   }
@@ -93,8 +102,13 @@ export const SendMessageToFriend = async (data) => {
 
 export const GetAllMessage = async (data) => {
   try {
-    const result = await axios.post(`${ApiUrl}/message/all`, { data });
-    return result.data;
+    const chatsRef = collection(fb_database, "/chats");
+    const querySnapshot = await getDocs(chatsRef);
+    const messages = [];
+    querySnapshot.forEach((doc) => {
+      messages.push({ id: doc.id, ...doc.data() });
+    });
+    return messages;
   } catch (error) {
     throw error;
   }

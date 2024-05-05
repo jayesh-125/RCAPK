@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar, Typography, Box } from "@mui/material";
 import { useSelector } from "react-redux";
+import { urlHelper } from "../configs/url";
 
 function ProfileSection() {
   const authUser = useSelector((s) => s.auth.authUser);
@@ -17,7 +18,7 @@ function ProfileSection() {
     >
       <Avatar
         alt={authUser?.username}
-        src={authUser?.imgUrl} // You can use the user's image URL here
+        src={`${urlHelper.image}/${authUser?.imgUrl}`}
         sx={{ width: 100, height: 100 }}
       />
       <Typography variant="h5" mt={1}>

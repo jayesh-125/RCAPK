@@ -14,23 +14,21 @@ import { startLoading, stopLoading } from "../redux/loaderSlice";
 import { setIsSend } from "../redux/callSlice";
 import { SendMessageToFriend } from "../services/api";
 import EmojiPicker from "emoji-picker-react";
-import { useSocket } from "../hook/Customhook";
 import { setMessageList } from "../redux/messageSlice";
 
 function ChatMessageBox() {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const socket = useSocket();
+
+  const emojiPickerRef = useRef(null);
   const dispatch = useDispatch();
   const { authUser } = useSelector((state) => state.auth);
   const { activeFriend } = useSelector((state) => state.user);
   const messages = useSelector((s) => s.message.list);
 
-  const emojiPickerRef = useRef(null);
-
   const toggleEmojiPicker = () => setShowEmojiPicker((prev) => !prev);
+
   const selectEmoji = (emoji) => {
-    // Append emoji only if it's not already present in the message
     setMessage((prevMessage) =>
       prevMessage.endsWith(emoji?.emoji)
         ? prevMessage
@@ -45,22 +43,20 @@ function ChatMessageBox() {
         fromUserId: authUser?._id,
         lastMessage: message,
         toUserId: activeFriend?._id,
+        createdAt: new Date(),
       };
-      dispatch(startLoading());
-      socket.emit("send_message", messageData);
       await SendMessageToFriend(messageData);
       dispatch(setIsSend(true));
-      dispatch(setMessageList([...messages, messageData]));
+      const {createdAt,...passData} = messageData;
+      dispatch(setMessageList([...messages, passData]));
     } catch (error) {
       console.error(error?.message);
     } finally {
-      dispatch(stopLoading());
       setMessage("");
       setShowEmojiPicker(false);
     }
   };
 
-  // Close emoji picker when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -70,9 +66,7 @@ function ChatMessageBox() {
         setShowEmojiPicker(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };

@@ -17,6 +17,7 @@ import { DeleteFriend } from "../services/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { route } from "../constant/routes";
 import { useWindowWidth } from "../hook/Customhook";
+import { setAuthUser } from "../redux/authSlice";
 
 function UserProfileCard({ user }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -32,7 +33,8 @@ function UserProfileCard({ user }) {
 
   const HandleDeleteFriend = async () => {
     try {
-      await DeleteFriend(user?._id);
+      const res = await DeleteFriend(authUser?._id, user?._id);
+      dispatch(setAuthUser(res?.data));
     } catch (error) {
       console.error(error.message);
     }
@@ -72,7 +74,15 @@ function UserProfileCard({ user }) {
               aria-label="user-avatar"
               sx={{ color: "#ffffff", background: "#017887  " }}
             >
-              {user?.username?.charAt(0).toUpperCase()}
+              {user?.imgUrl ? (
+                <img
+                  src={user.imgUrl}
+                  alt={user.username}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                user?.username?.charAt(0).toUpperCase()
+              )}
             </Avatar>
           }
           title={

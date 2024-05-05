@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Button, IconButton, InputBase, Popover } from "@mui/material";
 import { SearchSharp } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +28,8 @@ function Sidebar() {
       dispatch(setFriendList(res?.data));
     } catch (error) {
       console.error("Error fetching user data:", error);
+    } finally {
+      handleClose();
     }
   };
 
@@ -67,10 +69,10 @@ function Sidebar() {
           sx={{ marginTop: "20px", padding: "0 20px", width: "94%" }}
         />
         <IconButton
-          id="search-button" // Add id for targeting the button
+          id="search-button"
           onClick={handleSearch}
           aria-label="search"
-          sx={{ position: "absolute", top: "1rem", right: 0 }} // Position the button absolutely
+          sx={{ position: "absolute", top: "1rem", right: 0 }}
         >
           <SearchSharp />
         </IconButton>
@@ -95,9 +97,14 @@ function Sidebar() {
           },
         }}
       >
-        {friends &&
-          friends.map((user, index) => (
-            <UserProfileCard user={user} key={index} topUser={friends[0]} />
+        {friends.length > 0 &&
+          friends?.map((user, index) => (
+            <UserProfileCard
+              user={user}
+              key={index}
+              topUser={friends[0]}
+              addFriend={addFriend}
+            />
           ))}
       </Box>
       <Popover

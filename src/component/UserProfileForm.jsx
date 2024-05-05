@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { TextField, Button, TextareaAutosize } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { TextField, Button, TextareaAutosize, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { UpdateUserById } from "../services/api";
 import { setAuthUser } from "../redux/authSlice";
@@ -9,10 +9,13 @@ function UserProfileForm() {
   const [selectedImage, setSelectedImage] = useState(null);
   const authUser = useSelector((s) => s.auth.authUser);
   const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
-    username: authUser?.username,
-    email: authUser?.email,
-    bio: authUser?.bio,
+    username: "",
+    email: "",
+    bio: "",
+    imgUrl: "",
+    image: null,
   });
 
   const handleInputChange = (e) => {
@@ -31,7 +34,23 @@ function UserProfileForm() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+
+    const maxSizeInBytes = 5 * 1024 * 1024;
+    if (file.size > maxSizeInBytes) {
+      alert(
+        "Selected file size exceeds the limit (5MB). Please choose a smaller file."
+      );
+      return;
+    }
+
+    const allowedFileTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedFileTypes.includes(file.type)) {
+      alert("Invalid file type. Please select a JPEG, PNG, or GIF file.");
+      return;
+    }
+
     setSelectedImage(file);
+    setFormData((prev) => ({ ...prev, image: file }));
     setIsChanges(true);
   };
 
@@ -39,12 +58,12 @@ function UserProfileForm() {
     e.preventDefault();
     try {
       const formDataWithImage = new FormData();
-      formDataWithImage.append("image", selectedImage);
+      formDataWithImage.append("image", formData.image);
       formDataWithImage.append("username", formData.username);
       formDataWithImage.append("email", formData.email);
       formDataWithImage.append("bio", formData.bio);
 
-      const res = await UpdateUserById(authUser?._id, formDataWithImage);
+      const res = await UpdateUserById(authUser?._id, formData);
       setFormData((prev) => ({ ...prev, ...res?.data }));
       dispatch(setAuthUser(res?.data));
       setIsChanges(false);
@@ -53,8 +72,22 @@ function UserProfileForm() {
     }
   };
 
+  useEffect(() => {
+    authUser &&
+      setFormData({
+        username: authUser?.username,
+        email: authUser?.email,
+        bio: authUser?.bio,
+        imgUrl: authUser?.imgUrl,
+      });
+  }, [authUser]);
+
   return (
-    <form style={{ width: "100%", marginTop: "1rem" }} onSubmit={handleSubmit}>
+    <form
+      style={{ width: "100%", marginTop: "1rem" }}
+      encType="multipart/form-data"
+      onSubmit={handleSubmit}
+    >
       <TextField
         fullWidth
         variant="outlined"
@@ -91,8 +124,22 @@ function UserProfileForm() {
           border: "1px solid #ced4da",
         }}
       />
-      <input type="file" accept="image/*" onChange={handleImageChange} />
-      {selectedImage && <p>Selected Image: {selectedImage.name}</p>}
+      <p>Profile Image</p>
+      <input
+        type="file"
+        name="image"
+        accept="image/*"
+        onChange={handleImageChange}
+      />
+      {selectedImage && (
+        <Box>
+          <img
+            src={URL.createObjectURL(selectedImage)}
+            alt="Selected"
+            style={{ maxWidth: "200px", maxHeight: "200px" }}
+          />
+        </Box>
+      )}
       <Button
         type="submit"
         variant="contained"

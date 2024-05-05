@@ -36,14 +36,12 @@ const Header = () => {
 
   const handleLogOut = async () => {
     try {
-      const res = await SignOutUser();
-      if (res) {
-        setAnchorEl(null);
-        navigate(route?.login);
-        RemoveDataFromLocal("user");
-      }
+      await SignOutUser();
+      setAnchorEl(null);
+      navigate(route?.login);
+      RemoveDataFromLocal("authUser");
     } catch (error) {
-      alert(error.message);
+      console.error(error.message);
     }
   };
 
@@ -93,7 +91,20 @@ const Header = () => {
             color="inherit"
             sx={{ padding: 0, width: 50 }}
           >
-            <AccountCircle />
+            {authUser?.imgUrl ? (
+              <img
+                src={authUser.imgUrl}
+                alt={authUser.username}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  objectFit: "cover",
+                  borderRadius: 50,
+                }}
+              />
+            ) : (
+              <AccountCircle />
+            )}
           </IconButton>
         </Box>
       </Toolbar>
