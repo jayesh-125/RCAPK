@@ -1,6 +1,6 @@
 const appMode = {
     DEVELOPMENT: "http://localhost:3000",
-    PRODUCTION: import.meta.env.VITE_APP_API_URL,
+    PRODUCTION: "https://indchat-api.vercel.app",
 }
 
 export const apiUrl = (mode) => {
@@ -8,5 +8,5 @@ export const apiUrl = (mode) => {
 }
 
 export const urlHelper = {
-    image: appMode.DEVELOPMENT
+    image: appMode.PRODUCTION
 }

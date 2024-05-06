@@ -1,51 +1,53 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Box, Button, IconButton, InputBase, Popover } from "@mui/material";
-import { SearchSharp } from "@mui/icons-material";
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Add as AddIcon, Close as CloseIcon } from "@mui/icons-material";
+import CropFreeIcon from "@mui/icons-material/CropFree";
 import { useDispatch, useSelector } from "react-redux";
 import UserProfileCard from "./UserProfileCard";
-import { AddFriendUser, GetAllUsers } from "../services/api";
+import { AddFriendUser, GetAllFriend, GetAllUsers } from "../services/api";
 import { setFriendList } from "../redux/userSlice";
 
 function Sidebar() {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const [users, setUsers] = useState([]);
-  const [query, setQuery] = useState("");
   const authUser = useSelector((s) => s.auth.authUser);
   const friends = useSelector((s) => s.user.friendList);
   const dispatch = useDispatch();
 
-  const handleClose = () => {
-    setAnchorEl(null);
-    setQuery("");
-    setUsers([]);
-  };
-
   const addFriend = async (friend) => {
     try {
-      const res = await AddFriendUser(authUser?._id, {
+      await AddFriendUser(authUser?._id, {
         friend_id: friend?._id,
       });
+      const res = await GetAllFriend(authUser?._id);
       dispatch(setFriendList(res?.data));
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Error adding friend:", error);
     } finally {
-      handleClose();
+      setOpenDialog(false);
+      setUsers([]);
     }
   };
 
-  const getAllUsers = async () => {
+  const handleOpenDialog = async () => {
     try {
-      const res = await GetAllUsers(query);
-      setUsers(res.data);
+      const res = await GetAllUsers("");
+      setUsers(res?.data);
+      setOpenDialog(true);
     } catch (error) {
       console.error("Error fetching user data:", error);
-      alert("An error occurred while fetching user data.");
     }
   };
 
-  const handleSearch = () => {
-    getAllUsers();
-    setAnchorEl(document.getElementById("search-button"));
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setUsers([]);
   };
 
   return (
@@ -55,31 +57,21 @@ function Sidebar() {
           backgroundColor: "#ffffff",
           position: "relative",
           borderBottom: "2px solid #017887",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingRight: "20px",
+          my: "10px",
         }}
       >
-        <InputBase
-          variant="standard"
-          placeholder="Search friend"
-          color="success"
-          name="search"
-          type="text"
-          id="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          sx={{ marginTop: "20px", padding: "0 20px", width: "94%" }}
-        />
-        <IconButton
-          id="search-button"
-          onClick={handleSearch}
-          aria-label="search"
-          sx={{ position: "absolute", top: "1rem", right: 0 }}
-        >
-          <SearchSharp />
+        <Typography>Add Friend</Typography>
+        <IconButton onClick={handleOpenDialog} variant="contained">
+          <CropFreeIcon />
         </IconButton>
       </Box>
       <Box
         sx={{
-          height: "100%",
+          height: "calc(100% - 48px)",
           overflowY: "auto",
           padding: "0px 5px",
           scrollbarWidth: "4px",
@@ -107,36 +99,46 @@ function Sidebar() {
             />
           ))}
       </Box>
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        fullWidth
+        maxWidth="sm"
       >
-        {users.map((data) => (
-          <Box
+        <DialogTitle sx={{ backgroundColor: "#017887", color: "#fff" }}>
+          Add Friend
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseDialog}
             sx={{
-              marginTop: "10px",
-              padding: "10px",
-              display: "flex",
-              justifyContent: "space-between",
+              position: "absolute",
+              right: "8px",
+              top: "8px",
+              color: "#fff",
             }}
-            key={data?._id}
           >
-            <span>{data?.username}</span>
-            <Button color="success" onClick={() => addFriend(data)}>
-              Add
-            </Button>
-          </Box>
-        ))}
-      </Popover>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {users?.map((data, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "10px",
+              }}
+            >
+              <Typography>{data?.username}</Typography>
+              <IconButton onClick={() => addFriend(data)} size="small">
+                <AddIcon />
+              </IconButton>
+            </Box>
+          ))}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

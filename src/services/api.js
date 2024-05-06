@@ -3,6 +3,7 @@ import { fb_database } from "../configs/firebase"
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { apiUrl } from "../configs/url";
 
+// export const ApiUrl = apiUrl("DEVELOPMENT");
 export const ApiUrl = apiUrl("PRODUCTION");
 
 export const SignUpUser = async (data) => {
