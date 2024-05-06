@@ -64,7 +64,7 @@ function Sidebar() {
           my: "10px",
         }}
       >
-        <Typography>Add Friend</Typography>
+        <Typography sx={{ ml: "20px" }}>Add Friend</Typography>
         <IconButton onClick={handleOpenDialog} variant="contained">
           <CropFreeIcon />
         </IconButton>
@@ -121,22 +121,26 @@ function Sidebar() {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          {users?.map((data, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "10px",
-              }}
-            >
-              <Typography>{data?.username}</Typography>
-              <IconButton onClick={() => addFriend(data)} size="small">
-                <AddIcon />
-              </IconButton>
-            </Box>
-          ))}
+          {users?.map((data, index) => {
+            return (
+              data?._id !== authUser?._id && (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <Typography>{data?.username}</Typography>
+                  <IconButton onClick={() => addFriend(data)} size="small">
+                    <AddIcon />
+                  </IconButton>
+                </Box>
+              )
+            );
+          })}
         </DialogContent>
       </Dialog>
     </>
