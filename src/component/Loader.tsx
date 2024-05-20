@@ -1,10 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import CircularProgress from "@mui/material/CircularProgress";
-import { selectLoading } from "../redux/loaderSlice";
+import { is_loading } from "../redux/loaderSlice";
 
 const Loader = () => {
-  const loading = useSelector(selectLoading);
+  const loading = useSelector(is_loading);
 
   return (
     <div

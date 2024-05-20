@@ -7,18 +7,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@faker-js/faker": "^8.1.0",
-    "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.10",
-    "@mui/system": "^5.15.7",
     "@reduxjs/toolkit": "^1.9.5",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.12",
+    "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.2.1",
     "axios": "^1.6.5",
     "dotenv": "^16.4.1",
@@ -29,15 +30,21 @@
     "react-helmet": "^6.1.0",
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.16.0",
+    "typescript": "^5.4.5",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
+    "@types/axios": "^0.14.0",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-helmet": "^6.1.11",
     "eslint": "^8.45.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "vite": "^4.4.5"
-  }
+  },
+  "repository": "https://github.com/jayesh-125/indchat.git",
+  "author": "Jayesh <83691274+jayesh-125@users.noreply.github.com>",
+  "license": "MIT"
 }

@@ -8,10 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import ChatBox from "../component/ChatBox";
 import ChatMessageBox from "../component/ChatMessageBox";
 import { GetAllMessage } from "../services/api";
-import { setMessageList } from "../redux/messageSlice";
+import { list_message, setMessageList } from "../redux/messageSlice";
 
-import { startLoading, stopLoading } from "../redux/loaderSlice";
-import { setActiveFriend } from "../redux/userSlice";
+import {
+  active_friend,
+  friend_list,
+  setActiveFriend,
+} from "../redux/userSlice";
+import { auth_user } from "../redux/authSlice";
 
 import { route } from "../constant/routes";
 
@@ -20,10 +24,10 @@ function TempUserChat() {
 
   const dispatch = useDispatch();
   const location = useLocation();
-  const messages = useSelector((s) => s.message.list);
-  const authUser = useSelector((s) => s.auth.authUser);
-  const activeFriend = useSelector((s) => s.user.activeFriend);
-  const friends = useSelector((s) => s.user.friendList);
+  const messages = useSelector(list_message);
+  const authUser = useSelector(auth_user);
+  const activeFriend = useSelector(active_friend);
+  const friends = useSelector(friend_list);
 
   useEffect(() => {
     const fetchAllMessages = async () => {
@@ -35,7 +39,7 @@ function TempUserChat() {
         if (response && response.length > 0) {
           dispatch(
             setMessageList(
-              response?.map((a) => {
+              response?.map((a: any) => {
                 return {
                   ...a,
                   createdAt: new Date(

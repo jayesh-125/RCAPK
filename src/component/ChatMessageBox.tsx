@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { EmojiEmotions, Send } from "@mui/icons-material";
 import { startLoading, stopLoading } from "../redux/loaderSlice";
-import { setIsSend } from "../redux/callSlice";
 import { SendMessageToFriend } from "../services/api";
 import EmojiPicker from "emoji-picker-react";
 import { setMessageList } from "../redux/messageSlice";
@@ -46,8 +45,7 @@ function ChatMessageBox() {
         createdAt: new Date(),
       };
       await SendMessageToFriend(messageData);
-      dispatch(setIsSend(true));
-      const {createdAt,...passData} = messageData;
+      const { createdAt, ...passData } = messageData;
       dispatch(setMessageList([...messages, passData]));
     } catch (error) {
       console.error(error?.message);

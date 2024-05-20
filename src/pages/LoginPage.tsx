@@ -1,5 +1,5 @@
 import React from "react";
-import TempLogin from "../templetes/TempLogin";
+import TempLogin from "../templetes/Login";
 import AuthCheck from "../guard/AuthCheck";
 import DynamicMeta from "../component/Meta";
 

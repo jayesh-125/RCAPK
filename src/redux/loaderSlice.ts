@@ -7,15 +7,17 @@ const loaderSlice = createSlice({
     loading: false,
   },
   reducers: {
-    startLoading: (state) => {
+    startLoading: (state: any) => {
       state.loading = true;
     },
-    stopLoading: (state) => {
+    stopLoading: (state: any) => {
       state.loading = false;
     },
   },
 });
 
 export const { startLoading, stopLoading } = loaderSlice.actions;
-export const selectLoading = (state) => state.loader.loading;
+
 export default loaderSlice.reducer;
+
+export const is_loading = (state: any) => state.loader.loading;

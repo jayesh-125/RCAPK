@@ -2,31 +2,28 @@ import React, { useState } from "react";
 import {
   AppBar,
   Box,
-  Grid,
   IconButton,
-  Menu,
   MenuItem,
   Toolbar,
   Typography,
 } from "@mui/material";
-import ArrowBack from "@mui/icons-material/ArrowBackIos";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MoreIcon from "@mui/icons-material/MoreVert";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Home, ArrowBack, Settings } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+
 import { route } from "../constant/routes";
 import { RemoveDataFromLocal } from "../constant/common";
 import { SignOutUser } from "../services/auth";
-import { useSelector } from "react-redux";
 import { useWindowWidth } from "../hook/Customhook";
-import { Home } from "@mui/icons-material";
+import { auth_user } from "../redux/authSlice";
 
 const Header = () => {
+  const [show, setShow] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const location = useLocation();
-  const authUser = useSelector((s) => s.auth.authUser);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const authUser = useSelector(auth_user);
   const windoWidth = useWindowWidth();
-  const defaultOpen = (e) => setAnchorEl(e.currentTarget);
 
   const redirectBack = () => {
     location.pathname === route.dashboard
@@ -37,10 +34,11 @@ const Header = () => {
   const handleLogOut = async () => {
     try {
       await SignOutUser();
-      setAnchorEl(null);
+      setShow(false);
       navigate(route?.login);
       RemoveDataFromLocal("authUser");
-    } catch (error) {
+      RemoveDataFromLocal("TOKEN");
+    } catch (error: any) {
       console.error(error.message);
     }
   };
@@ -50,7 +48,7 @@ const Header = () => {
       position="static"
       enableColorOnDark={true}
       sx={{
-        background: "#017887",
+        background: "linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)",
         boxShadow: "none",
         width: "100%",
         paddingLeft: "1rem",
@@ -75,23 +73,19 @@ const Header = () => {
         >
           Chat-room
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            marginLeft: "auto",
-          }}
-        >
-          <Typography>{authUser?.username}</Typography>
-          <IconButton
-            size="large"
-            edge="end"
-            onClick={defaultOpen}
-            color="inherit"
-            sx={{ padding: 0, width: 50 }}
+        <Box sx={{ display: "flex", ml: "auto", alignItems: "center" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginLeft: "auto",
+              gap: 3,
+            }}
           >
-            {authUser?.imgUrl ? (
+            <Typography variant="h6">{authUser?.username}</Typography>
+
+            {authUser?.imgUrl && (
               <img
                 src={authUser.imgUrl}
                 alt={authUser.username}
@@ -102,37 +96,47 @@ const Header = () => {
                   borderRadius: 50,
                 }}
               />
-            ) : (
-              <AccountCircle />
             )}
-          </IconButton>
+          </Box>
+
+          <Box sx={{ position: "relative", ml: 1 }}>
+            <IconButton
+              size="large"
+              edge="end"
+              onClick={() => setShow(!show)}
+              color="default"
+              sx={{ p: 0, mr: 1 }}
+            >
+              <Settings />
+            </IconButton>
+
+            {show && (
+              <Box
+                sx={{
+                  width: "180px",
+                  position: "absolute",
+                  top: "50px",
+                  right: "0px",
+                  bgcolor: "#ffffff",
+                  color: "#000000",
+                  borderRadius: 5,
+                  boxShadow: "2px 4px 5px #00000055",
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    setShow(false);
+                    navigate(route?.profile);
+                  }}
+                >
+                  Profile
+                </MenuItem>
+                <MenuItem onClick={handleLogOut}>LogOut</MenuItem>
+              </Box>
+            )}
+          </Box>
         </Box>
       </Toolbar>
-      <Menu
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        id={"menu-id"}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={Boolean(anchorEl)}
-        onClose={() => setAnchorEl(null)}
-      >
-        <MenuItem
-          onClick={() => {
-            setAnchorEl(null);
-            navigate(route?.profile);
-          }}
-        >
-          Profile
-        </MenuItem>
-        <MenuItem onClick={handleLogOut}>LogOut</MenuItem>
-      </Menu>
     </AppBar>
   );
 };

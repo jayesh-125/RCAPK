@@ -8,14 +8,19 @@ const messageSlice = createSlice({
         list: null
     },
     reducers: {
-        setMessageList: (state, action) => {
+        setMessageList: (state: any, action: any) => {
             state.list = action.payload
         },
-        setLastMessage: (state, action) => {
+        setLastMessage: (state: any, action: any) => {
             state.last_message = action.payload
         }
     }
 })
 
 export const { setLastMessage, setMessageList } = messageSlice.actions;
+
 export default messageSlice.reducer
+
+export const last_message = (state: any) => state.message.last_message
+
+export const list_message = (state: any) => state.message.list

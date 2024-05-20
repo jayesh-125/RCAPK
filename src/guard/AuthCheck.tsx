@@ -3,7 +3,7 @@ import { GetDataFromLocal } from "../constant/common";
 import { useNavigate } from "react-router-dom";
 import { route } from "../constant/routes";
 
-function AuthCheck({ children }) {
+function AuthCheck({ children }: any) {
   const authUser = GetDataFromLocal("authUser");
   const navigate = useNavigate();
 

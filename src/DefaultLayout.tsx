@@ -5,17 +5,17 @@ import Header from "./component/Header";
 import Loader from "./component/Loader";
 import AuthProvider from "./guard/AuthProvider";
 import { useWindowWidth } from "./hook/Customhook";
-import { Box } from "@mui/system";
+import { Box } from "@mui/material";
 
-function DefaultLayout({ children, isUserProfile = false }) {
+function DefaultLayout({ children, isUserProfile = false }: any) {
   const windoWidth = useWindowWidth();
 
   return (
-    <Box sx={{ background: "#e8fcff", height: "100vh" }}>
+    <Box sx={{ height: "100vh" }}>
+      <Loader />
       <AuthProvider>
         <Header />
         <Grid container spacing={0}>
-          <Loader />
           {windoWidth > 570 && (
             <Grid
               item

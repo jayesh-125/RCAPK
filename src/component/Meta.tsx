@@ -1,6 +1,12 @@
 import { Helmet } from "react-helmet";
 
-const DynamicMeta = ({ title, description }) => {
+const DynamicMeta = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => {
   return (
     <Helmet>
       <title>{title}</title>
