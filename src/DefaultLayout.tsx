@@ -1,11 +1,15 @@
 import React from "react";
-import { Grid } from "@mui/material";
+
+import { Box, IconButton } from "@mui/material";
+import { Home, Person, PersonAdd, Settings } from "@mui/icons-material";
+
 import Sidebar from "./component/Sidebar";
 import Header from "./component/Header";
 import Loader from "./component/Loader";
+
 import AuthProvider from "./guard/AuthProvider";
 import { useWindowWidth } from "./hook/Customhook";
-import { Box } from "@mui/material";
+import LeftDrawer from "./component/LeftDrawer";
 
 function DefaultLayout({ children, isUserProfile = false }: any) {
   const windoWidth = useWindowWidth();
@@ -14,32 +18,17 @@ function DefaultLayout({ children, isUserProfile = false }: any) {
     <Box sx={{ height: "100vh" }}>
       <Loader />
       <AuthProvider>
-        <Header />
-        <Grid container spacing={0}>
-          {windoWidth > 570 && (
-            <Grid
-              item
-              sm={4}
-              sx={{
-                width: "100%",
-                display: isUserProfile ? "none" : "block",
-                height: "calc(100vh - 125px)",
-              }}
-            >
-              <Sidebar />
-            </Grid>
-          )}
-          <Grid
-            sx={{
-              width: "inherit",
-              padding: { xs: "0 10px", sm: "0" },
-            }}
-            item
-            sm={isUserProfile ? 12 : 8}
-          >
+        <Box sx={{ display: "flex" }}>
+          
+          <LeftDrawer />
+
+          {!isUserProfile && windoWidth > 570 && <Sidebar />}
+
+          <Box sx={{ width: "100%", p: 1 }}>
+            <Header />
             {children}
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </AuthProvider>
     </Box>
   );

@@ -10,14 +10,17 @@ import { GenerateUniqueId } from "../services/generator";
 import { CreateUserAuth } from "../services/auth";
 import { Person } from "@mui/icons-material";
 import CSInput from "../component/CSInput";
+import { useDispatch } from "react-redux";
 
 const TempSignUp = () => {
+  const [signUpData, setSignUpData] = useState<any>(userModel);
+
   const navigate = useNavigate();
-  const [signUpData, setSignUpData] = useState(userModel);
+  const dispatch = useDispatch();
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
-    setSignUpData((prev) => ({
+    setSignUpData((prev: any) => ({
       ...prev,
       [name]: value,
       id: GenerateUniqueId(),
@@ -27,7 +30,7 @@ const TempSignUp = () => {
   const handleRegisterClick = async () => {
     try {
       await CreateUserAuth(signUpData.email, signUpData.password);
-      const res = await SignUpUser({ ...signUpData });
+      const res = await SignUpUser({ ...signUpData }, dispatch);
       navigate(res?.data ? route.login : route.sign_up);
     } catch (error: any) {
       alert(error.message);

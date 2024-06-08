@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
 import { useSelector } from "react-redux";
-import CircularProgress from "@mui/material/CircularProgress";
+
 import { is_loading } from "../redux/loaderSlice";
 
 const Loader = () => {
-  const loading = useSelector(is_loading);
+  const [loading, setLoading] = useState<boolean>(true);
+  
+  const apiLoading = useSelector(is_loading);
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => setLoading(false), 4000);
+    return () => clearTimeout(timeOut);
+  }, []);
 
   return (
     <div
       style={{
-        display: loading ? "flex" : "none",
+        display: loading || apiLoading ? "flex" : "none",
         position: "fixed",
         zIndex: 999,
         top: 0,
@@ -21,7 +29,7 @@ const Loader = () => {
         justifyContent: "center",
       }}
     >
-      <CircularProgress color="primary" size={60} />
+      <span className="loader"></span>
     </div>
   );
 };

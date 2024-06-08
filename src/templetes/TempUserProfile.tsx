@@ -1,6 +1,8 @@
 import React from "react";
-import { Container, Grid, Avatar, Typography, Box } from "@mui/material";
+
+import { Grid, Avatar, Typography, Box } from "@mui/material";
 import { useSelector } from "react-redux";
+
 import UserProfileForm from "../component/UserProfileForm";
 import { auth_user } from "../redux/authSlice";
 
@@ -8,7 +10,7 @@ function TempUserProfile() {
   const authUser = useSelector(auth_user);
 
   return (
-    <Container sx={{ margin: "20px 0" }} maxWidth="xl">
+    <Box sx={{ margin: "20px 0", p: 0 }} maxWidth="xl">
       <Grid container spacing={2}>
         <Grid item xs={12} sm={4}>
           <Box
@@ -63,7 +65,7 @@ function TempUserProfile() {
           </Box>
         </Grid>
       </Grid>
-    </Container>
+    </Box>
   );
 }
 

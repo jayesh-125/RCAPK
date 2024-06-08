@@ -20,10 +20,8 @@ const TempLogin = () => {
   const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await LoginUser({ ...formData });
-      dispatch(setAuthUser(res?.data));
-      localStorage.setItem("TOKEN", res.token);
-      navigate(route.dashboard);
+      await LoginUser({ ...formData }, dispatch);
+      navigate(route.chat);
     } catch (error: any) {
       alert(error.message);
     }

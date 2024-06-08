@@ -1,67 +1,52 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   Container,
-  Grid,
   IconButton,
   TextField,
   InputAdornment,
-  InputLabel,
   Box,
+  Paper,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { EmojiEmotions, Send } from "@mui/icons-material";
-import { startLoading, stopLoading } from "../redux/loaderSlice";
-import { SendMessageToFriend } from "../services/api";
 import EmojiPicker from "emoji-picker-react";
-import { setMessageList } from "../redux/messageSlice";
+import { SendMessageToFriend } from "../services/api";
+import { list_message, setMessageList } from "../redux/messageSlice";
+import { auth_user } from "../redux/authSlice";
+import { useParams } from "react-router-dom";
 
 function ChatMessageBox() {
-  const [message, setMessage] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [message, setMessage] = useState<string>("");
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
+  const emojiRef = useRef<HTMLElement | null>(null);
 
-  const emojiPickerRef = useRef(null);
   const dispatch = useDispatch();
-  const { authUser } = useSelector((state) => state.auth);
-  const { activeFriend } = useSelector((state) => state.user);
-  const messages = useSelector((s) => s.message.list);
+  const params = useParams();
+  const authUser: any = useSelector(auth_user);
+  const messages: any[] = useSelector(list_message);
 
-  const toggleEmojiPicker = () => setShowEmojiPicker((prev) => !prev);
-
-  const selectEmoji = (emoji) => {
-    setMessage((prevMessage) =>
-      prevMessage.endsWith(emoji?.emoji)
-        ? prevMessage
-        : prevMessage + emoji?.emoji
-    );
-  };
-
-  const sendMessage = async (e) => {
+  const sendMessage = async (e: any) => {
     e.preventDefault();
     try {
-      const messageData = {
+      const messageData: any = {
         fromUserId: authUser?._id,
         lastMessage: message,
-        toUserId: activeFriend?._id,
+        toUserId: params?.id,
         createdAt: new Date(),
       };
-      await SendMessageToFriend(messageData);
-      const { createdAt, ...passData } = messageData;
-      dispatch(setMessageList([...messages, passData]));
-    } catch (error) {
+      await SendMessageToFriend(messageData, dispatch);
+    } catch (error: any) {
       console.error(error?.message);
     } finally {
       setMessage("");
-      setShowEmojiPicker(false);
+      setShowEmoji(false);
     }
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        emojiPickerRef.current &&
-        !emojiPickerRef.current.contains(event.target)
-      ) {
-        setShowEmojiPicker(false);
+    const handleClickOutside = (event: any) => {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setShowEmoji(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -71,76 +56,70 @@ function ChatMessageBox() {
   }, []);
 
   return (
-    <Container
+    <Paper
+      elevation={3}
       sx={{
+        mt: 1,
+        p: 1,
         display: "flex",
         alignItems: "center",
-        background: "#b6d4d0",
-        position: "relative",
+        borderRadius: 5,
+        border: "1px solid #2193b0",
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.3)",
       }}
     >
       <Box
-        ref={emojiPickerRef}
+        ref={emojiRef}
         sx={{
-          display: showEmojiPicker ? "block" : "none",
+          display: showEmoji ? "block" : "none",
           position: "absolute",
-          bottom: "100%",
-          right: 0,
+          bottom: "60px",
+          right: "20px",
+          zIndex: 1,
         }}
       >
-        <EmojiPicker onEmojiClick={selectEmoji} />
+        <EmojiPicker
+          onEmojiClick={(emoji: any) => {
+            setMessage((prev) => prev + emoji.emoji);
+          }}
+        />
       </Box>
 
-      <form onSubmit={sendMessage} style={{ width: "100%" }}>
-        <Grid
-          container
-          spacing={0}
-          sx={{
-            alignItems: "center",
-            padding: "10px 0",
-            justifyContent: "space-between",
-          }}
+      <form onSubmit={sendMessage} style={{ width: "100%", display: "flex" }}>
+        <IconButton
+          color="primary"
+          aria-label="emoji"
+          onClick={() => setShowEmoji((prev) => !prev)}
+          sx={{ mr: 1 }}
         >
-          <Grid item xs={1}>
-            <IconButton
-              aria-label="emoji"
-              sx={{ color: "#017887" }}
-              onClick={toggleEmojiPicker}
-            >
-              <EmojiEmotions />
-            </IconButton>
-          </Grid>
-          <Grid item xs={10}>
-            <TextField
-              id="outlined-basic"
-              label={
-                <InputLabel
-                  htmlFor="outlined-basic"
-                  sx={{ color: "success.main", padding: 0 }}
-                >
-                  Enter your message
-                </InputLabel>
-              }
-              variant="outlined"
-              color="success"
-              fullWidth
-              size="small"
-              onChange={(e) => setMessage(e?.target?.value)}
-              value={message}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton type="submit" aria-label="message">
-                      <Send />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-        </Grid>
+          <EmojiEmotions />
+        </IconButton>
+
+        <TextField
+          id="outlined-basic"
+          label="Enter your message"
+          variant="outlined"
+          color="primary"
+          fullWidth
+          size="small"
+          onChange={(e) => setMessage(e.target.value)}
+          value={message}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "30px",
+              paddingRight: "40px",
+            },
+            "& .MuiInputLabel-root": {
+              top: "0",
+              left: "0",
+            },
+          }}
+        />
+        <IconButton color="primary" type="submit" aria-label="send">
+          <Send />
+        </IconButton>
       </form>
-    </Container>
+    </Paper>
   );
 }
 

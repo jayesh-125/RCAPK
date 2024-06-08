@@ -1,15 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+interface Message {
+    last_message: string;
+    list: any[];
+}
+
+const initialState: Message = {
+    last_message: "",
+    list: []
+};
 
 const messageSlice = createSlice({
     name: "message",
-    initialState: {
-        last_message: "",
-        list: null
-    },
+    initialState: initialState,
     reducers: {
         setMessageList: (state: any, action: any) => {
-            state.list = action.payload
+            state.list = [...action.payload]
         },
         setLastMessage: (state: any, action: any) => {
             state.last_message = action.payload

@@ -8,8 +8,8 @@ import authReducer from "../authSlice";
 const store: Store = configureStore({
     reducer: {
         auth: authReducer,
-        message: messageReducer,
         user: userReducer,
+        message: messageReducer,
         loader: loaderReducer,
     },
 });

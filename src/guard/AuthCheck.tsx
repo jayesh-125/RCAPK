@@ -9,7 +9,7 @@ function AuthCheck({ children }: any) {
 
   useEffect(() => {
     if (authUser) {
-      navigate(route.dashboard);
+      navigate(route.chat);
     }
   }, [authUser]);
   return <>{children}</>;

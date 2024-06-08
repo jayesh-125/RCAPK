@@ -2,19 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface State {
     active: any;
-    list: any | any[],
+    list: any[],
     friendList: any[],
     activeFriend: any,
 }
 
-const userSlice = createSlice<State>({
+const initialState: State = {
+    active: null,
+    list: [],
+    friendList: [],
+    activeFriend: null,
+}
+
+const userSlice = createSlice({
     name: "user",
-    initialState: {
-        active: null,
-        list: null,
-        friendList: [],
-        activeFriend: null,
-    },
+    initialState: initialState,
     reducers: {
         setActiveUser: (state: any, action: any) => {
             state.active = action.payload;

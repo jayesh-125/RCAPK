@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import MoreIcon from "@mui/icons-material/MoreVert";
 import {
   Avatar,
   Box,
@@ -12,40 +11,25 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveFriend } from "../redux/userSlice";
+import { useParams } from "react-router-dom";
+
 import { DeleteFriend } from "../services/api";
-import { useLocation, useNavigate } from "react-router-dom";
-import { route } from "../constant/routes";
-import { useWindowWidth } from "../hook/Customhook";
-import { setAuthUser } from "../redux/authSlice";
+import { auth_user } from "../redux/authSlice";
 
-function UserProfileCard({ user }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const authUser = useSelector((s) => s.auth.authUser);
-  const activeFriend = useSelector((s) => s.user.activeFriend);
-  const location = useLocation();
-  const navigate = useNavigate();
+function UserProfileCard(props: any) {
+  const { user, onClick } = props;
+  const { id } = useParams();
+
+  const [anchorEl, setAnchorEl] = useState<any>(null);
+
+  const authUser: any = useSelector(auth_user);
   const dispatch = useDispatch();
-  const openIcon = (e) => setAnchorEl(e?.currentTarget);
-  const handleClose = () => setAnchorEl(null);
-  const windowWidth = useWindowWidth();
 
-  const HandleDeleteFriend = async () => {
+  const deleteFriend = async () => {
     try {
-      const res = await DeleteFriend(authUser?._id, user?._id);
-      dispatch(setAuthUser(res?.data));
-    } catch (error) {
+      await DeleteFriend(authUser?._id, user?._id, dispatch);
+    } catch (error: any) {
       console.error(error.message);
-    }
-  };
-
-  const setFriend = (data) => {
-    if (data) {
-      dispatch(setActiveFriend(data));
-    }
-    if (location.pathname === route.dashboard) {
-      navigate(route.chat);
     }
   };
 
@@ -53,26 +37,31 @@ function UserProfileCard({ user }) {
     <>
       <Card
         sx={{
-          margin: "3px 0",
-          backgroundColor:
-            user?._id === activeFriend?._id ? "#6dbfc9" : "inherit",
-          color: "inherit",
+          margin: "1rem 0",
+          borderRadius: 4,
+          background:
+            user?._id === id
+              ? "linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)"
+              : "inherit",
           cursor: "pointer",
-          "& .MuiCardHeader-subheader": {
-            color: "inherit",
+          transition: "transform 0.3s, box-shadow 0.3s",
+          "&:hover": {
+            transform: "scale(1.02)",
+            boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
           },
           "& .MuiAvatar-root": {
             color: "inherit",
             backgroundColor: "default",
           },
         }}
-        onClick={() => setFriend(user)}
+        onClick={onClick}
       >
         <CardHeader
           avatar={
             <Avatar
               aria-label="user-avatar"
-              sx={{ color: "#ffffff", background: "#017887  " }}
+              variant="rounded"
+              sx={{ color: "#ffffff", background: "#2193b0" }}
             >
               {user?.imgUrl ? (
                 <img
@@ -87,7 +76,7 @@ function UserProfileCard({ user }) {
           }
           title={
             <Box display="flex" alignItems="center">
-              <Typography sx={{ color: "#00424a" }}>
+              <Typography color={user?._id === id ? "#ffffff" : "#2193b0"}>
                 {user?.username}
               </Typography>
             </Box>
@@ -97,16 +86,14 @@ function UserProfileCard({ user }) {
             <Box>
               <IconButton
                 aria-label="more"
-                aria-controls={open ? "long-menu" : undefined}
-                aria-expanded={open ? "true" : undefined}
+                aria-controls={Boolean(anchorEl) ? "long-menu" : undefined}
+                aria-expanded={Boolean(anchorEl) ? "true" : undefined}
                 aria-haspopup="true"
                 id="long-button"
-                onClick={openIcon}
+                onClick={(e: any) => setAnchorEl(e?.currentTarget)}
                 sx={{ color: "inherit" }}
-              >
-                {/* This is where the three dots icon was previously */}
-              </IconButton>
-              <IconButton onClick={() => HandleDeleteFriend(user)}>
+              ></IconButton>
+              <IconButton onClick={() => deleteFriend()}>
                 <DeleteForeverIcon />
               </IconButton>
             </Box>
@@ -118,12 +105,15 @@ function UserProfileCard({ user }) {
             "aria-labelledby": "long-button",
           }}
           anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
           sx={{ padding: 0, background: "#00000022" }}
         >
-          <MenuItem onClick={handleClose} sx={{ padding: "0px 4px" }}>
-            <IconButton onClick={() => HandleDeleteFriend(user)}>
+          <MenuItem
+            onClick={() => setAnchorEl(null)}
+            sx={{ padding: "0px 4px" }}
+          >
+            <IconButton onClick={() => deleteFriend()}>
               <DeleteForeverIcon />
             </IconButton>
           </MenuItem>
