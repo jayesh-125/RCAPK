@@ -16,7 +16,7 @@ const apiUrl = (mode: string) => {
     return appMode[mode]
 }
 
-const token = localStorage.getItem("TOKEN")
+const getToken = () => localStorage.getItem("TOKEN");
 
 // export const ApiUrl = apiUrl("DEVELOPMENT");
 export const ApiUrl = apiUrl("PRODUCTION");
@@ -39,8 +39,9 @@ export const LoginUser = async (data: any, dispatch: any) => {
         dispatch(startLoading())
         const result = await axios.post(`${ApiUrl}/auth/login`, data);
         if (result.data.status) {
-            localStorage.setItem("TOKEN", result.data.token);
-            dispatch(setAuthUser(result.data.data));
+            localStorage.setItem("authUser", JSON.stringify(result.data?.data));
+            localStorage.setItem("TOKEN", result.data?.token);
+            dispatch(setAuthUser(result?.data));
             dispatch(stopLoading());
         }
         return result?.data;
@@ -52,6 +53,7 @@ export const LoginUser = async (data: any, dispatch: any) => {
 //auth user
 export const GetUserById = async (id: string, dispatch: any) => {
     try {
+        const token = getToken();
         dispatch(startLoading())
         const result = await axios.get(`${ApiUrl}/user/${id}`,
             {
@@ -72,6 +74,7 @@ export const GetUserById = async (id: string, dispatch: any) => {
 
 export const UpdateUserById = async (id: string, data: any, dispatch: any) => {
     try {
+        const token = getToken();
         dispatch(startLoading())
         const result = await axios.put(`${ApiUrl}/user/${id}`, data, {
             headers: {
@@ -90,6 +93,7 @@ export const UpdateUserById = async (id: string, data: any, dispatch: any) => {
 
 export const GetAllUsers = async (query: any, dispatch: any) => {
     try {
+        const token = getToken();
         dispatch(startLoading())
         const result = await axios.get(`${ApiUrl}/user/all`, {
             params: { search: query },
@@ -110,6 +114,7 @@ export const GetAllUsers = async (query: any, dispatch: any) => {
 
 export const AddFriendUser = async (id: string, data: any, dispatch: any) => {
     try {
+        const token = getToken();
         dispatch(startLoading())
         const result = await axios.post(`${ApiUrl}/user/add/${id}`, data, {
             headers: {
@@ -127,6 +132,8 @@ export const AddFriendUser = async (id: string, data: any, dispatch: any) => {
 
 export const GetAllFriend = async (id: string, data: any, dispatch: any) => {
     try {
+        const token = getToken();
+        console.log("token", token)
         dispatch(startLoading())
         const result = await axios.post(`${ApiUrl}/user/get-all-friend/${id}`, data, {
             headers: {
@@ -146,6 +153,7 @@ export const GetAllFriend = async (id: string, data: any, dispatch: any) => {
 
 export const DeleteFriend = async (id: string, friend_id: string, dispatch: any) => {
     try {
+        const token = getToken();
         dispatch(startLoading())
         const result = await axios.post(`${ApiUrl}/user/delete/${id}`,
             {

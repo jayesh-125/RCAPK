@@ -14,14 +14,14 @@ const authSlice = createSlice({
     name: "auth",
     initialState: initialState,
     reducers: {
-        setAuthUser: (state, action) => {
-            state.authUser = action.payload;
-            localStorage.setItem("authUser", JSON.stringify(action.payload));
+        setAuthUser: (state: any, action: any) => {
+            state.authUser = action.payload.data;
+            state.accessToken = action.payload.token;
         },
     },
 });
 
-export default authSlice.reducer;
+export default authSlice.reducer;   
 
 export const { setAuthUser } = authSlice.actions;
 

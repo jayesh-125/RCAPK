@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { GetDataFromLocal } from "../constant/common";
 import { onAuthStateChanged } from "firebase/auth";
 import { setAuthUser } from "../redux/authSlice";
 import { auth } from "../configs/firebase";
@@ -13,7 +12,8 @@ function AuthProvider({ children }: any) {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = GetDataFromLocal("authUser");
+  const localData: any = localStorage.getItem("authUser");
+  const user = JSON.parse(localData);
 
   const checkAuth = async () => {
     try {
@@ -25,7 +25,7 @@ function AuthProvider({ children }: any) {
 
   useEffect(() => {
     if (user) {
-      dispatch(setAuthUser(user));
+      dispatch(setAuthUser({ data: user }));
     } else {
       navigate(route.login);
     }

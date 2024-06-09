@@ -92,6 +92,7 @@ const TempLogin = () => {
             height: "100%",
             minWidth: "300px",
             maxWidth: { xs: "100%", sm: "80%" },
+            p: { xs: 2, sm: 0 },
           }}
         >
           <Typography variant="h3" sx={{ mb: 3 }} color={"#017887"}>

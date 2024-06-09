@@ -26,7 +26,6 @@ import { route } from "../../constant/routes";
 import { AddFriendUser, GetAllFriend, GetAllUsers } from "../../services/api";
 import { auth_user } from "../../redux/authSlice";
 import { SignOutUser } from "../../services/auth";
-import { RemoveDataFromLocal } from "../../constant/common";
 
 const LeftDrawer = () => {
   const [show, setShow] = useState<boolean>(false);
@@ -90,17 +89,17 @@ const LeftDrawer = () => {
       <IconButton sx={{ my: 1 }} onClick={() => navigate(route.profile)}>
         <Person color="secondary" />
       </IconButton>
-      <IconButton sx={{ my: 1 }}>
+      {/* <IconButton sx={{ my: 1 }}>
         <Settings color="secondary" />
-      </IconButton>
+      </IconButton> */}
       <IconButton
         sx={{ my: 1 }}
         onClick={() => {
           try {
             SignOutUser();
             navigate(route?.login);
-            RemoveDataFromLocal("authUser");
-            RemoveDataFromLocal("TOKEN");
+            localStorage.removeItem("authUser");
+            localStorage.removeItem("TOKEN");
           } catch (error: any) {
             console.error(error.message);
           }

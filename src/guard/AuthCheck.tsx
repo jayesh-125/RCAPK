@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { GetDataFromLocal } from "../constant/common";
 import { useNavigate } from "react-router-dom";
 import { route } from "../constant/routes";
 
 function AuthCheck({ children }: any) {
-  const authUser = GetDataFromLocal("authUser");
+  const localData: any = localStorage.getItem("authUser");
+  const authUser = JSON.parse(localData);
   const navigate = useNavigate();
 
   useEffect(() => {
